@@ -1,6 +1,6 @@
-from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
 import os
+from flask import Flask, render_template, request, jsonify
+from flask.ext.sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
@@ -11,14 +11,30 @@ db = SQLAlchemy(app)
 from models import HealthCenter
 
 
-@app.route('/')
-def hello():
-    return "Hello World!"
-
-
-@app.route('/<name>')
-def hello_name(name):
-    return "Hello {}!".format(name)
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    errors = []
+    if request.method == "POST":
+        # get url that the person has entered
+        try:
+            address = request.form['address']
+        except:
+            errors.append(
+                "Unable to get Address. Please make sure it's valid and try again."
+            )
+            return render_template('index.html', errors=errors)
+        try:
+            center = HealthCenter(
+                address=address,
+                telephone=None,
+                extradata=None
+            )
+            db.session.add(center)
+            db.session.commit()
+        except:
+            errors.append("Unable to add item to database.")
+            raise
+    return render_template('index.html', errors=errors)
 
 
 if __name__ == '__main__':
