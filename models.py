@@ -1,8 +1,10 @@
-from app import db
+import sqlalchemy as db
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.ext.declarative import declarative_base
 
+Base = declarative_base()
 
-class HealthCenter(db.Model):
+class HealthCenter(Base):
     __tablename__ = 'health_centers'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -17,3 +19,11 @@ class HealthCenter(db.Model):
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'address': self.address,
+            'telephone': self.telephone,
+            'extradata': self.extradata,
+        }
