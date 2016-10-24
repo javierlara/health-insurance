@@ -27,3 +27,8 @@ class HealthCenter(Base):
             'telephone': self.telephone,
             'extradata': self.extradata,
         }
+
+    def update(self, data):
+        self.address = data.get('address')
+        self.telephone = data.get('telephone')
+        self.extradata = data.get('extradata')
