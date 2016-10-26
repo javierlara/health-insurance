@@ -1,23 +1,21 @@
 from flask_restful import Resource
 from flask import abort, make_response, request
-from flask.ext.sqlalchemy import SQLAlchemy
-import models
+import api.models as models
 from datetime import datetime
-
-db = SQLAlchemy()
+from api.db import db_session as session
 
 class HealthCenter(Resource):
     @staticmethod
     def get_health_center(health_center_id):
-        return db.session.query(models.HealthCenter).get(health_center_id)
+        return session.query(models.HealthCenter).get(health_center_id)
 
     def delete_health_center(self, health_center):
         health_center.deleted_at = datetime.utcnow()
-        db.session.commit()
+        session.commit()
 
     def update_health_center(self, health_center, data):
         health_center.update(data)
-        db.session.commit()
+        session.commit()
 
     def get(self, health_center_id):
         health_center = self.get_health_center(health_center_id)
@@ -53,7 +51,7 @@ class HealthCenterCollection(Resource):
         return new_health_center.serialize()
 
     def get_all_health_centers(self):
-        return db.session.query(models.HealthCenter).all()
+        return session.query(models.HealthCenter).all()
 
     def add_new_health_center(self, data):
         health_center = models.HealthCenter(
@@ -62,7 +60,7 @@ class HealthCenterCollection(Resource):
             extradata=data.get('extradata')
         )
 
-        db.session.add(health_center)
-        db.session.commit()
+        session.add(health_center)
+        session.commit()
 
         return health_center
