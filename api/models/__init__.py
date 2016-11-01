@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from api.db import Base
 from sqlalchemy.dialects.postgresql import JSON
-from sqlalchemy.ext.declarative import declarative_base
+
 
 class HealthCenter(Base):
     __tablename__ = 'health_centers'
@@ -13,7 +13,7 @@ class HealthCenter(Base):
     extradata = Column(JSON)
     deleted_at = Column(DateTime())
 
-    def __init__(self, name, address, telephone, extradata, deleted_at):
+    def __init__(self, name, address, telephone, extradata):
         self.name = name
         self.address = address
         self.telephone = telephone

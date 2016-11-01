@@ -4,6 +4,7 @@ import api.models as models
 from datetime import datetime
 from api.db import db_session as session
 
+
 class HealthCenter(Resource):
     @staticmethod
     def get_health_center(health_center_id):
@@ -55,6 +56,7 @@ class HealthCenterCollection(Resource):
 
     def add_new_health_center(self, data):
         health_center = models.HealthCenter(
+            name=data.get('name'),
             address=data.get('address'),
             telephone=data.get('telephone'),
             extradata=data.get('extradata')
