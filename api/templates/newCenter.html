@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Nuevo Centro de Salud</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <style>
-      .container {
-        max-width: 1000px;
-      }
-    </style>
-  </head>
-  <body>
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
     <div class="container">
       <h1>Centro de Salud</h1>
       <form id='healthCentersForm' role="form" method='POST' action='/api/health_centers' enctype='application/json'>
@@ -26,15 +16,7 @@
         <h4>{{ error }}</h4>
       {% endfor %}
     </div>
-    <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type='text/javascript'>
-{#        $(document).ready(function() {#}
-{#            $('#healthCentersForm').ajaxForm({#}
-{#                dataType: "json",#}
-{#                contentType : "application/json"#}
-{#            });#}
-{#        });#}
         $("#healthCentersForm").submit(function(event) {
             event.preventDefault();
             var $form = $( this ), url = $form.attr( 'action' );
@@ -44,8 +26,7 @@
                 url: url,
                 data: formData,
                 success: function() {
-                    alert("success")
-                    clearForm($form)
+                    window.location.replace("{{ url_for('health_centers') }}")
                 },
                 dataType: "json",
                 contentType : "application/json"
@@ -73,5 +54,5 @@
             return o;
         };
     </script>
-  </body>
-</html>
+  {% endif %}
+{% endblock %}
