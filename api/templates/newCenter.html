@@ -2,12 +2,16 @@
 {% block body %}
   {% if session.logged_in %}
     <div class="container">
-      <h1>Centro de Salud</h1>
-      <form id='healthCentersForm' role="form" method='POST' action='/api/health_centers' enctype='application/json'>
+        {% if center %}
+            <h1>Editar centro</h1>
+        {% else %}
+            <h1>Centro de Salud</h1>
+        {% endif %}
+      <form id='healthCentersForm' role="form" method='POST' action="{{ '/api/health_centers' + ('/' + center.id|string if center else '') }}" enctype='application/json'>
         <div class="form-group">
-            <input type="text" name="name" class="form-control" id="address-box" placeholder="Nombre" style="max-width: 300px;" autofocus required />
-            <input type="text" name="address" class="form-control" id="address-box" placeholder="Dirección" style="max-width: 300px;" autofocus required />
-            <input type="text" name="telephone" class="form-control" id="address-box" placeholder="Teléfono" style="max-width: 300px;" autofocus required />
+            <input type="text" name="name" class="form-control" id="address-box" placeholder="Nombre" style="max-width: 300px;" autofocus required value="{{ center.name if center else '' }}" />
+            <input type="text" name="address" class="form-control" id="address-box" placeholder="Dirección" style="max-width: 300px;" autofocus required value="{{ center.address if center else '' }}" />
+            <input type="text" name="telephone" class="form-control" id="address-box" placeholder="Teléfono" style="max-width: 300px;" autofocus required value="{{ center.telephone if center else '' }}" />
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
@@ -22,7 +26,11 @@
             var $form = $( this ), url = $form.attr( 'action' );
             var formData = JSON.stringify($form.serializeObject())
             $.ajax({
+                {% if center %}
+                type: "PUT",
+                {% else %}
                 type: "POST",
+                {% endif %}
                 url: url,
                 data: formData,
                 success: function() {

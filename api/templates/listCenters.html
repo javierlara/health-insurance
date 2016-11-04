@@ -2,12 +2,43 @@
 {% block body %}
   {% if session.logged_in %}
     <a href="{{ url_for('new_center') }}" class=add-center>Nuevo Centro</a>
-    <ul class=centers>
-    {% for center in centers %}
-    <li><h2>{{ center.name }}</h2> {{ center.address|safe }} {{ center.telephone|safe }}
-    {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-    {% endfor %}
+      <table class="centers">
+        <tr>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+        </tr>
+        {% for center in centers %}
+        <tr>
+            <td>{{ center.name }}</td>
+            <td>{{ center.address }}</td>
+            <td>{{ center.telephone }}</td>
+            <td>
+                <ul>
+                    <li><a href="{{ url_for('edit_center', center_id=center.id) }}">Editar</a></li>
+                    <li><a href="#" id="deleteCenter" data="{{ center.id }}">Borrar</a></li>
+                </ul>
+            </td>
+        </tr>
+        {% else %}
+            <em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </table>
     </ul>
+    <script type='text/javascript'>
+        $("#deleteCenter").click(function(e) {
+            e.preventDefault();
+            var centerId = $(this).attr("data");
+            $.ajax({
+                type: "DELETE",
+                url: 'api/health_centers/' + centerId,
+                success: function() {
+                    location.reload();
+                },
+                contentType : "application/json"
+            });
+        })
+    </script>
   {% endif %}
 {% endblock %}

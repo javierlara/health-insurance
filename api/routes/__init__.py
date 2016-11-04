@@ -20,6 +20,12 @@ def health_centers():
     return render_template('listCenters.html', centers=centers)
 
 
+@app.route('/health_centers/edit/<int:center_id>', methods=['GET'])
+def edit_center(center_id):
+    center = HealthCenter.get_health_center(center_id)
+    return render_template('newCenter.html', center=center)
+
+
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
