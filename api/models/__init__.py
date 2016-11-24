@@ -37,3 +37,39 @@ class HealthCenter(Base):
         self.address = data.get('address')
         self.telephone = data.get('telephone')
         self.extradata = data.get('extradata')
+
+
+class News(Base):
+    __tablename__ = 'news'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String())
+    image = Column(String())
+    content = Column(String())
+    author_id = Column(Integer)
+    deleted_at = Column(DateTime())
+
+    def __init__(self, title, image, content, author_id):
+        self.title = title
+        self.image = image
+        self.content = content
+        self.author_id = author_id
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'image': self.image,
+            'content': self.content,
+            'author_id': self.author_id,
+            'deleted_at': str(self.deleted_at)
+        }
+
+    def update(self, data):
+        self.title = data.get('title')
+        self.image = data.get('image')
+        self.content = data.get('content')
+        self.author_id = data.get('author_id')

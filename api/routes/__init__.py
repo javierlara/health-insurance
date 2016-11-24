@@ -1,12 +1,15 @@
 from flask.ext.restful import Api
 from api import app
 from .resources.health_center import HealthCenter, HealthCenterCollection
+from .resources.news import NewsCollection, News
 from flask import render_template, request, session, redirect, url_for, flash
 
 api = Api(app)
 
 api.add_resource(HealthCenter, '/api/health_centers/<string:health_center_id>')
 api.add_resource(HealthCenterCollection, '/api/health_centers')
+api.add_resource(News, '/api/news/<string:news_id>')
+api.add_resource(NewsCollection, '/api/news')
 
 
 @app.route('/health_centers/new', methods=['GET'])
@@ -24,6 +27,23 @@ def health_centers():
 def edit_center(center_id):
     center = HealthCenter.get_health_center(center_id)
     return render_template('newCenter.html', center=center)
+
+
+@app.route('/news/new', methods=['GET'])
+def new_news():
+    return render_template('newNews.html')
+
+
+@app.route('/news', methods=['GET'])
+def newses():
+    newses = NewsCollection.get_all_news()
+    return render_template('listNews.html', newses=newses)
+
+
+@app.route('/news/edit/<int:news_id>', methods=['GET'])
+def edit_news(news_id):
+    news = News.get_news(news_id)
+    return render_template('newNews.html', news=news)
 
 
 @app.route('/')
