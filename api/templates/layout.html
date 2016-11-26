@@ -23,7 +23,7 @@
 
 {% include 'header.html' %}
 <div class="section no-pad-bot" id="index-banner">
-    <div class=container>
+    <div id="main-container" class="container">
       {% for message in get_flashed_messages() %}
         <script>Materialize.toast('{{ message }}', 4000)</script>
       {% endfor %}

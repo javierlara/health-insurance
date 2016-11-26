@@ -1,33 +1,37 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
-    <a href="{{ url_for('new_center') }}" class=add-center>Nuevo Centro</a>
-      <table class="centers">
-        <tr>
-            <th>Nombre</th>
-            <th>Dirección</th>
-            <th>Teléfono</th>
-            <th>Acciones</th>
-        </tr>
-        {% for center in centers %}
-        <tr>
-            <td>{{ center.name }}</td>
-            <td>{{ center.address }}</td>
-            <td>{{ center.telephone }}</td>
-            <td>
-                <ul>
-                    <li><a href="{{ url_for('edit_center', center_id=center.id) }}">Editar</a></li>
-                    <li><a href="#" id="deleteCenter" data="{{ center.id }}">Borrar</a></li>
-                </ul>
-            </td>
-        </tr>
-        {% else %}
-            <em>Unbelievable.  No entries here so far</em>
-        {% endfor %}
-      </table>
-    </ul>
-    <script type='text/javascript'>
-        $("#deleteCenter").click(function(e) {
+        <div class="row">
+            <h4>Centros de Salud</h4>
+            <a href="{{ url_for('new_center') }}" class="btn right">Nuevo Centro</a>
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th style="width: 70px;">Acciones</th>
+                </tr>
+             </thead>
+
+            <tbody>
+                {% for center in centers %}
+                <tr>
+                    <td>{{ center.name }}</td>
+                    <td>{{ center.address }}</td>
+                    <td>{{ center.telephone }}</td>
+                    <td>
+                        <a class="tooltipped" data-position="top" data-delay="25" data-tooltip="Editar" href="{{ url_for('edit_center', center_id=center.id) }}"><i class="material-icons">mode_edit</i></a>
+                        <div class="tooltipped delete-action red-text text-darken-4 deleteCenter" data-position="top" data-delay="25" data-tooltip="Borrar" data="{{ center.id }}"><i class="material-icons">delete</i></div>
+                    </td>
+                </tr>
+                {% else %}
+                    <em>Unbelievable.  No entries here so far</em>
+                {% endfor %}
+            </tbody>
+        </table>
+      <script type='text/javascript'>
+        $(".deleteCenter").click(function(e) {
             e.preventDefault();
             var centerId = $(this).attr("data");
             $.ajax({

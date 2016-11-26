@@ -10,3 +10,13 @@
 .loginButton {
     float:right;
 }
+
+.delete-action {
+    cursor: pointer;
+    display: inline-block;
+}
+
+#main-container .btn {
+    text-transform: none;!important;
+    padding: 0 1.2rem;
+}

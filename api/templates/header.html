@@ -4,20 +4,24 @@
             <img class="brand-logo-image" src="{{ url_for('static', filename='images/logoTopClaro.png') }}" />
         </a>
           <ul class="right hide-on-med-and-down">
-              <li>
-                  {% if session.logged_in %}
-                    <a href="{{ url_for('logout') }}">Salir</a>
-                  {% endif %}
-              </li>
+              {% if session.logged_in %}
+                  <li>
+                    <a href="{{ url_for('health_centers') }}">Centros de Salud</a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('newses') }}">Noticias</a>
+                  </li>
+                  <li>
+                    <a class="indigo lighten-2" href="{{ url_for('logout') }}">Salir</a>
+                  </li>
+              {% endif %}
           </ul>
 
 
           <ul id="nav-mobile" class="side-nav">
               <li>
-                  {% if not session.logged_in %}
-                    <a href="{{ url_for('login') }}">log in</a>
-                  {% else %}
-                    <a href="{{ url_for('logout') }}">log out</a>
+                  {% if session.logged_in %}
+                    <a href="{{ url_for('logout') }}">Salir</a>
                   {% endif %}
             </li>
           </ul>

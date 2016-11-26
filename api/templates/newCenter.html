@@ -1,25 +1,44 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
-    <div class="container">
         {% if center %}
-            <h1>Editar centro</h1>
+            <h5>Editar centro</h5>
         {% else %}
-            <h1>Centro de Salud</h1>
+            <h5>Nuevo Centro de Salud</h5>
         {% endif %}
-      <form id='healthCentersForm' role="form" method='POST' action="{{ '/api/health_centers' + ('/' + center.id|string if center else '') }}" enctype='application/json'>
-        <div class="form-group">
-            <input type="text" name="name" class="form-control" id="address-box" placeholder="Nombre" style="max-width: 300px;" autofocus required value="{{ center.name if center else '' }}" />
-            <input type="text" name="address" class="form-control" id="address-box" placeholder="Dirección" style="max-width: 300px;" autofocus required value="{{ center.address if center else '' }}" />
-            <input type="text" name="telephone" class="form-control" id="address-box" placeholder="Teléfono" style="max-width: 300px;" autofocus required value="{{ center.telephone if center else '' }}" />
+      <div class="row">
+      <form id='healthCentersForm' class="col s12" role="form" method='POST' action="{{ '/api/health_centers' + ('/' + center.id|string if center else '') }}" enctype='application/json'>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="name" class="form-control" id="name" class="validate" required value="{{ center.name if center else '' }}" />
+                <label for="name">Nombre</label>
+            </div>
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="address" class="form-control" id="address" class="validate" required value="{{ center.address if center else '' }}" />
+                <label for="address">Dirección</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="telephone" class="form-control" id="telephone" class="validate" required value="{{ center.telephone if center else '' }}" />
+                <label for="telephone">Teléfono</label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-default">
+            {% if center %}
+                Editar
+            {% else %}
+                Crear
+            {% endif %}
+        </button>
       </form>
       <br>
       {% for error in errors %}
         <h4>{{ error }}</h4>
       {% endfor %}
-    </div>
     <script type='text/javascript'>
         $("#healthCentersForm").submit(function(event) {
             event.preventDefault();
