@@ -10,19 +10,19 @@
       <form id='healthCentersForm' class="col s12" role="form" method='POST' action="{{ '/api/health_centers' + ('/' + center.id|string if center else '') }}" enctype='application/json'>
         <div class="row">
             <div class="input-field col s6">
-                <input type="text" name="name" class="form-control" id="name" class="validate" required value="{{ center.name if center else '' }}" />
+                <input type="text" name="name" id="name" class="validate" required value="{{ center.name if center else '' }}" />
                 <label for="name">Nombre</label>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s6">
-                <input type="text" name="address" class="form-control" id="address" class="validate" required value="{{ center.address if center else '' }}" />
+                <input type="text" name="address" id="address" class="validate" required value="{{ center.address if center else '' }}" />
                 <label for="address">Dirección</label>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s6">
-                <input type="text" name="telephone" class="form-control" id="telephone" class="validate" required value="{{ center.telephone if center else '' }}" />
+                <input type="text" name="telephone" id="telephone" class="validate" required value="{{ center.telephone if center else '' }}" />
                 <label for="telephone">Teléfono</label>
             </div>
         </div>

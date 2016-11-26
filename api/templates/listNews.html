@@ -1,46 +1,52 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
-    <a href="{{ url_for('new_news') }}" class=add-news>Nueva Noticia</a>
-      <table class="newses">
-        <tr>
-            <th>Título</th>
-            <th>Imagen</th>
-            <th>Contenido</th>
-            <th>Autor</th>
-            <th>Acciones</th>
-        </tr>
-        {% for news in newses %}
-        <tr>
-            <td>{{ news.title }}</td>
-            <td>{{ news.image }}</td>
-            <td>{{ news.content }}</td>
-            <td>{{ news.author_id }}</td>
-            <td>
-                <ul>
-                    <li><a href="{{ url_for('edit_news', news_id=news.id) }}">Editar</a></li>
-                    <li><a href="#" id="deleteNews" data="{{ news.id }}">Borrar</a></li>
-                </ul>
-            </td>
-        </tr>
-        {% else %}
-            <em>Unbelievable. No entries here so far</em>
-        {% endfor %}
-      </table>
-    </ul>
-    <script type='text/javascript'>
-        $("#deleteNews").click(function(e) {
-            e.preventDefault();
-            var newsId = $(this).attr("data");
-            $.ajax({
-                type: "DELETE",
-                url: 'api/news/' + newsId,
-                success: function() {
-                    location.reload();
-                },
-                contentType : "application/json"
-            });
-        })
-    </script>
+        <div class="row">
+            <h4>Noticias</h4>
+            <a href="{{ url_for('new_news') }}" class="btn right">Nueva Noticia</a>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+{#                        <th>Imagen</th>#}
+                        <th>Contenido</th>
+                        <th>Autor</th>
+                        <th style="width: 70px;">Acciones</th>
+                    </tr>
+                 </thead>
+
+                <tbody>
+                    {% for  news in newses %}
+                    <tr>
+                        <td>{{ news.title }}</td>
+{#                        <td>{{ news.image }}</td>#}
+                        <td style="width:100px" class="truncate">{{ news.content }}</td>
+{#                      <td>{{ news.author_id }}</td>#}
+                        <td>admin</td>
+
+                        <td>
+                            <a class="tooltipped" data-position="top" data-delay="25" data-tooltip="Editar" href="{{ url_for('edit_news', news_id=news.id) }}"><i class="material-icons">mode_edit</i></a>
+                            <div class="tooltipped delete-action red-text text-darken-4 deleteNews" data-position="top" data-delay="25" data-tooltip="Borrar" data="{{ news.id }}"><i class="material-icons">delete</i></div>
+                        </td>
+                    </tr>
+                    {% else %}
+                        <em>No hay todavía</em>
+                    {% endfor %}
+                </tbody>
+            </table>
+          <script type='text/javascript'>
+            $(".deleteNews").click(function(e) {
+                e.preventDefault();
+                var newsId = $(this).attr("data");
+                $.ajax({
+                    type: "DELETE",
+                    url: 'api/news/' + newsId,
+                    success: function() {
+                        location.reload();
+                    },
+                    contentType : "application/json"
+                });
+            })
+        </script>
   {% endif %}
 {% endblock %}

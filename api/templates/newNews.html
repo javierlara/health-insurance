@@ -1,26 +1,50 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
-    <div class="container">
         {% if news %}
-            <h1>Editar noticia</h1>
+            <h5>Editar noticia</h5>
         {% else %}
-            <h1>Noticia</h1>
+            <h5>Nueva Noticia</h5>
         {% endif %}
-      <form id='newsForm' role="form" method='POST' action="{{ '/api/news' + ('/' + news.id|string if news else '') }}" enctype='application/json'>
-        <div class="form-group">
-            <input type="text" name="title" class="form-control" id="address-box" placeholder="Título" style="max-width: 300px;" autofocus required value="{{ news.title if news else '' }}" />
-            <input type="text" name="image" class="form-control" id="address-box" placeholder="Imagen" style="max-width: 300px;" autofocus required value="{{ news.image if news else '' }}" />
-            <input type="text" name="content" class="form-control" id="address-box" placeholder="Contenido" style="max-width: 300px;" autofocus required value="{{ news.content if news else '' }}" />
-            <input type="text" name="author_id" class="form-control" id="address-box" placeholder="Autor" style="max-width: 300px;" autofocus required value="{{ news.author_id if news else '' }}" />
+      <div class="row">
+      <form id='newsForm' class="col s12" role="form" method='POST' action="{{ '/api/news' + ('/' + news.id|string if news else '') }}" enctype='application/json'>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="title" id="title" class="validate" required value="{{ news.title if news else '' }}" />
+                <label for="title">Título</label>
+            </div>
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="image" id="image" class="validate" required value="{{ news.image if news else '' }}" />
+                <label for="image">Imagen</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <textarea name="content" id="content" class="validate materialize-textarea" required>{{ news.content if news else '' }}</textarea>
+                <label for="content">Contenido</label>
+            </div>
+        </div>
+{#        <div class="row">#}
+{#            <div class="input-field col s6">#}
+{#                <input type="number" name="author_id" id="author_id" class="validate" required value="{{ news.author_id if news else '' }}" />#}
+{#                <label for="author_id">Autor</label>#}
+{#            </div>#}
+{#        </div>#}
+
+        <button type="submit" class="btn btn-default">
+            {% if news %}
+                Editar
+            {% else %}
+                Crear
+            {% endif %}
+        </button>
       </form>
       <br>
       {% for error in errors %}
         <h4>{{ error }}</h4>
       {% endfor %}
-    </div>
     <script type='text/javascript'>
         $("#newsForm").submit(function(event) {
             event.preventDefault();
@@ -41,6 +65,10 @@
                 contentType : "application/json"
             });
         });
+
+        function clearForm(form) {
+            form.find("input").val("")
+        }
 
         $.fn.serializeObject = function()
         {
