@@ -54,7 +54,8 @@ class HealthCenterCollection(Resource):
 
     @staticmethod
     def get_all_health_centers():
-        return session.query(models.HealthCenter).all()
+        query = session.query(models.HealthCenter).filter(models.HealthCenter.deleted_at == None)
+        return query.all()
 
     @staticmethod
     def add_new_health_center(data):

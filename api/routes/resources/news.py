@@ -54,7 +54,8 @@ class NewsCollection(Resource):
 
     @staticmethod
     def get_all_news():
-        return session.query(models.News).all()
+        query = session.query(models.News).filter(models.News.deleted_at == None)
+        return query.all()
 
     @staticmethod
     def add_new_news(data):
