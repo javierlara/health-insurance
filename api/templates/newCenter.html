@@ -34,6 +34,7 @@
                 Crear
             {% endif %}
         </button>
+        <button class="btn red darken-4" onclick="back()">Cancelar</button>
       </form>
       <br>
       {% for error in errors %}
@@ -80,6 +81,10 @@
             });
             return o;
         };
+
+        function back() {
+            window.location.replace("{{ url_for('health_centers') }}");
+        }
     </script>
   {% endif %}
 {% endblock %}

@@ -17,7 +17,7 @@
         <div class="row">
             <div class="input-field col s6">
                 <input type="text" name="image" id="image" class="validate" required value="{{ news.image if news else '' }}" />
-                <label for="image">Imagen</label>
+                <label for="image">Image (URL)</label>
             </div>
         </div>
         <div class="row">
@@ -40,6 +40,7 @@
                 Crear
             {% endif %}
         </button>
+        <button class="btn red darken-4" onclick="back()">Cancelar</button>
       </form>
       <br>
       {% for error in errors %}
@@ -86,6 +87,10 @@
             });
             return o;
         };
+
+        function back() {
+            window.location.replace("{{ url_for('newses') }}");
+        }
     </script>
   {% endif %}
 {% endblock %}
