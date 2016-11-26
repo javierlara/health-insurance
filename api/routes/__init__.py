@@ -54,12 +54,12 @@ def login():
     error = None
     if request.method == 'POST':
         if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
+            error = 'Usuario inválido'
         elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
+            error = 'Contraseña inválida'
         else:
             session['logged_in'] = True
-            flash('You were logged in')
+            flash('Iniciaste sesión')
             return redirect(url_for('health_centers'))
     return render_template('login.html', error=error)
 
@@ -67,5 +67,5 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    flash('You were logged out')
+    flash('Saliste de la sesión')
     return redirect(url_for('login'))

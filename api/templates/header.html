@@ -1,0 +1,26 @@
+<nav class="indigo lighten-3" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="#" class="brand-logo">
+            <img class="brand-logo-image" src="{{ url_for('static', filename='images/logoTopClaro.png') }}" />
+        </a>
+          <ul class="right hide-on-med-and-down">
+              <li>
+                  {% if session.logged_in %}
+                    <a href="{{ url_for('logout') }}">Salir</a>
+                  {% endif %}
+              </li>
+          </ul>
+
+
+          <ul id="nav-mobile" class="side-nav">
+              <li>
+                  {% if not session.logged_in %}
+                    <a href="{{ url_for('login') }}">log in</a>
+                  {% else %}
+                    <a href="{{ url_for('logout') }}">log out</a>
+                  {% endif %}
+            </li>
+          </ul>
+          <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+</nav>

@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from api.db import init_db, db_session
 
+
 app = Flask(__name__)
 app.config.update(dict(
     USERNAME='admin',
@@ -11,7 +12,6 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # init_db()
-
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
