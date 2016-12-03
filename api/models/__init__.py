@@ -10,13 +10,15 @@ class HealthCenter(Base):
     name = Column(String())
     address = Column(String())
     telephone = Column(String())
+    location = Column(String())
     extradata = Column(JSON)
     deleted_at = Column(DateTime())
 
-    def __init__(self, name, address, telephone, extradata):
+    def __init__(self, name, address, telephone, location, extradata):
         self.name = name
         self.address = address
         self.telephone = telephone
+        self.location = location
         self.extradata = extradata
 
     def __repr__(self):
@@ -28,6 +30,7 @@ class HealthCenter(Base):
             'name': self.name,
             'address': self.address,
             'telephone': self.telephone,
+            'location': self.location,
             'extradata': self.extradata,
             'deleted_at': str(self.deleted_at)
         }
@@ -36,6 +39,7 @@ class HealthCenter(Base):
         self.name = data.get('name')
         self.address = data.get('address')
         self.telephone = data.get('telephone')
+        self.location = data.get('location')
         self.extradata = data.get('extradata')
 
 

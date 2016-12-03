@@ -63,6 +63,7 @@ class HealthCenterCollection(Resource):
             name=data.get('name'),
             address=data.get('address'),
             telephone=data.get('telephone'),
+            location=data.get('location'),
             extradata=data.get('extradata')
         )
 
