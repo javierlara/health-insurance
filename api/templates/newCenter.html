@@ -105,7 +105,7 @@
             address_location = document.getElementById("location").value;
             var latlng;
             var zoom = 10;
-            if(address_location != 'None') {
+            if(address_location !== 'None' && address_location !== '') {
                 splited = address_location .split(',');
                 latlng = new google.maps.LatLng(splited[0].substr(1),splited[1].slice(0, -1));
                 zoom =15;
