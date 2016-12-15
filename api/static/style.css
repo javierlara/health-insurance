@@ -20,3 +20,5 @@
     text-transform: none;!important;
     padding: 0 1.2rem;
 }
+
+#map { height: 500px; width: auto;}

@@ -14,18 +14,23 @@
                 <label for="name">Nombre</label>
             </div>
         </div>
-        <div class="row">
-            <div class="input-field col s6">
-                <input type="text" name="address" id="address" class="validate" required value="{{ center.address if center else '' }}" />
-                <label for="address">Dirección</label>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s6">
-                <input type="text" name="telephone" id="telephone" class="validate" required value="{{ center.telephone if center else '' }}" />
-                <label for="telephone">Teléfono</label>
-            </div>
-        </div>
+
+
+          <div class="row">
+              <div class="input-field col s6">
+                  <input type="text" name="telephone" id="telephone" class="validate" required value="{{ center.telephone if center else '' }}" />
+                  <label for="telephone">Teléfono</label>
+              </div>
+          </div>
+          <div class="row">
+              <div class="input-field col s6">
+                  <input type="text" name="address" id="address" class="validate" required value="{{ center.address if center else '' }}" />
+                  <label for="address">Dirección</label>
+              </div>
+          </div>
+
+          <div id="map"></div>
+            <input type="hidden" id="location" name="location" value="{{ center.location if center else '' }}"/>
 
         <button type="submit" class="btn btn-default">
             {% if center %}
@@ -85,6 +90,69 @@
         function back() {
             window.location.replace("{{ url_for('health_centers') }}");
         }
-    </script>
+
+
+        // Google maps
+
+        var geocoder;
+        var map;
+        var address;
+        var marker;
+
+        function initMap() {
+            geocoder = new google.maps.Geocoder();
+
+            address_location = document.getElementById("location").value;
+            var latlng;
+            var zoom = 10;
+            if(address_location !== 'None' && address_location !== '') {
+                splited = address_location .split(',');
+                latlng = new google.maps.LatLng(splited[0].substr(1),splited[1].slice(0, -1));
+                zoom =15;
+            } else {
+                latlng = new google.maps.LatLng(-34.7185397,-58.2761414);
+            }
+
+            var mapOptions = {
+              zoom: zoom,
+              center: latlng,
+                scrollwheel: false
+            };
+
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            marker = new google.maps.Marker({
+                map: map,
+                position: latlng
+            });
+
+            document.getElementById('address').addEventListener('focusout', function() {
+                codeAddress();
+            });
+        }
+
+        function codeAddress() {
+            var oldAddress = address;
+            address = document.getElementById("address").value;
+            if(address && oldAddress !== address){
+                geocoder.geocode(
+                        {'address': address, componentRestrictions: {country: 'Argentina'}}, function(results, status) {
+                  if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(15);
+                    marker.setPosition(results[0].geometry.location);
+                    document.getElementById("location").value = results[0].geometry.location;
+                  } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                  }
+                });
+            }
+        }
+
+
+      </script>
+      <script async defer
+              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdQBd8I4Elx6GVElgC-QB3-DrDEl5fqS0&callback=initMap">
+      </script>
   {% endif %}
 {% endblock %}
