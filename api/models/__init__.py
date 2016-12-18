@@ -1,4 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import ForeignKey
+from sqlalchemy import PrimaryKeyConstraint
+from sqlalchemy import Table
+from sqlalchemy.orm import relationship
+
 from api.db import Base
 from sqlalchemy.dialects.postgresql import JSON
 
@@ -24,8 +29,8 @@ class HealthCenter(Base):
     def __repr__(self):
         return '<id {}>'.format(self.id)
 
-    def serialize(self):
-        return {
+    def serialize(self, relations=True):
+        serialized = {
             'id': self.id,
             'name': self.name,
             'address': self.address,
@@ -34,6 +39,9 @@ class HealthCenter(Base):
             'extradata': self.extradata,
             'deleted_at': str(self.deleted_at)
         }
+        if relations:
+            serialized['plans'] = [r.serialize(False) for r in self.plans]
+        return serialized
 
     def update(self, data):
         self.name = data.get('name')
@@ -77,3 +85,42 @@ class News(Base):
         self.image = data.get('image')
         self.content = data.get('content')
         self.author_id = data.get('author_id')
+
+health_centers_plans = Table('health_centers_plans',
+                             Base.metadata,
+                             Column('health_center_id', Integer, ForeignKey('health_centers.id'), nullable=False),
+                             Column('plan_id', Integer, ForeignKey('plans.id'), nullable=False),
+                             Column('deleted_at', DateTime, nullable=True),
+                             PrimaryKeyConstraint('health_center_id', 'plan_id')
+                             )
+
+
+class Plan(Base):
+    __tablename__ = 'plans'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String())
+    deleted_at = Column(DateTime())
+    health_centers = relationship('HealthCenter', secondary=health_centers_plans, backref='plans')
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self, relations=True):
+        serialized = {
+            'id': self.id,
+            'name': self.name,
+            'deleted_at': str(self.deleted_at)
+        }
+        if relations:
+            serialized['health_centers'] = [r.serialize(False) for r in self.health_centers]
+        return serialized
+
+    def update(self, data):
+        self.name = data.get('name')
+
+
+

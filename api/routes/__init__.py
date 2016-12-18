@@ -1,5 +1,6 @@
 from flask.ext.restful import Api
 from api import app
+from api.routes.resources.plan import Plan, PlanCollection
 from .resources.health_center import HealthCenter, HealthCenterCollection
 from .resources.news import NewsCollection, News
 from flask import render_template, request, session, redirect, url_for, flash, g
@@ -11,6 +12,8 @@ api.add_resource(HealthCenter, '/api/health_centers/<string:health_center_id>')
 api.add_resource(HealthCenterCollection, '/api/health_centers')
 api.add_resource(News, '/api/news/<string:news_id>')
 api.add_resource(NewsCollection, '/api/news')
+api.add_resource(Plan, '/api/plans/<string:plan_id>')
+api.add_resource(PlanCollection, '/api/plans')
 
 
 def logged():
