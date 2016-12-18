@@ -1,8 +1,9 @@
 from flask.ext.restful import Api
 from api import app
-from api.routes.resources.plan import Plan, PlanCollection
 from .resources.health_center import HealthCenter, HealthCenterCollection
 from .resources.news import NewsCollection, News
+from .resources.plan import Plan, PlanCollection
+from .resources.doctor import Doctor, DoctorCollection
 from flask import render_template, request, session, redirect, url_for, flash, g
 from functools import wraps
 
@@ -14,6 +15,8 @@ api.add_resource(News, '/api/news/<string:news_id>')
 api.add_resource(NewsCollection, '/api/news')
 api.add_resource(Plan, '/api/plans/<string:plan_id>')
 api.add_resource(PlanCollection, '/api/plans')
+api.add_resource(Doctor, '/api/doctors/<string:doctor_id>')
+api.add_resource(DoctorCollection, '/api/doctors')
 
 
 def logged():
@@ -53,7 +56,6 @@ def edit_center(center_id):
     center = HealthCenter.get_health_center(center_id)
     plans = PlanCollection.get_all_plans()
     center_plan_ids = list(map(lambda x: x.id, center.plans))
-    print(center_plan_ids)
     return render_template('centers/newCenter.html',
                            center=center,
                            plans=plans,
@@ -97,11 +99,35 @@ def plans():
 @app.route('/plans/edit/<int:plan_id>', methods=['GET'])
 @login_required
 def edit_plan(plan_id):
-    print(plan_id)
     plan = Plan.get_plan(plan_id)
     return render_template('plans/newPlan.html', plan=plan)
 
 
+@app.route('/doctors/new', methods=['GET'])
+@login_required
+def new_doctor():
+    plans = PlanCollection.get_all_plans()
+    return render_template('doctors/newDoctor.html', plans=plans)
+
+
+@app.route('/doctors', methods=['GET'])
+@login_required
+def doctors():
+    doctors = DoctorCollection.get_all_doctors()
+    return render_template('doctors/listDoctors.html', doctors=doctors)
+
+
+@app.route('/doctors/edit/<int:doctor_id>', methods=['GET'])
+@login_required
+def edit_doctor(doctor_id):
+    doctor = Doctor.get_doctor(doctor_id)
+    plans = PlanCollection.get_all_plans()
+    doctor_plan_ids = list(map(lambda x: x.id, doctor.plans))
+    return render_template('doctors/newDoctor.html',
+                           doctor=doctor,
+                           plans=plans,
+                           doctor_plan_ids=doctor_plan_ids
+                           )
 
 
 

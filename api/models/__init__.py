@@ -134,5 +134,61 @@ class Plan(Base):
     def update(self, data):
         self.name = data.get('name')
 
+doctors_plans = Table('doctors_plans',
+                             Base.metadata,
+                             Column('doctor_id', Integer, ForeignKey('doctors.id'), nullable=False),
+                             Column('plan_id', Integer, ForeignKey('plans.id'), nullable=False),
+                             PrimaryKeyConstraint('doctor_id', 'plan_id')
+                             )
 
+
+class Doctor(Base):
+    __tablename__ = 'doctors'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String())
+    address = Column(String())
+    telephone = Column(String())
+    location = Column(String())
+    plans = relationship('Plan', secondary=doctors_plans, backref='doctors')
+    deleted_at = Column(DateTime())
+
+    def __init__(self, name, address, telephone, location, plan_ids):
+        self.name = name
+        self.address = address
+        self.telephone = telephone
+        self.location = location
+
+        for id in plan_ids:
+            plan = session.query(Plan).get(id)
+            if plan is not None:
+                self.plans.append(plan)
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self, relations=True):
+        serialized = {
+            'id': self.id,
+            'name': self.name,
+            'address': self.address,
+            'telephone': self.telephone,
+            'location': self.location,
+            'deleted_at': str(self.deleted_at)
+        }
+        if relations:
+            serialized['plans'] = [r.serialize(False) for r in self.plans]
+        return serialized
+
+    def update(self, data):
+        self.name = data.get('name')
+        self.address = data.get('address')
+        self.telephone = data.get('telephone')
+        self.location = data.get('location')
+        self.plans = []
+        if data.get('plan_ids') is not None:
+            for id in data.get('plan_ids'):
+                plan = session.query(Plan).get(id)
+                if plan is not None:
+                    self.plans.append(plan)
 
