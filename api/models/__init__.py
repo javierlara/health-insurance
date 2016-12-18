@@ -198,15 +198,16 @@ class Doctor(Base):
         self.telephone = telephone
         self.location = location
 
-        for p_id in plan_ids:
-            plan = session.query(Plan).get(p_id)
-            if plan is not None:
-                self.plans.append(plan)
-
-        for s_id in speciality_ids:
-            speciality = session.query(Speciality).get(s_id)
-            if speciality is not None:
-                self.specialities.append(speciality)
+        if plan_ids is not None:
+            for p_id in plan_ids:
+                plan = session.query(Plan).get(p_id)
+                if plan is not None:
+                    self.plans.append(plan)
+        if speciality_ids is not None:
+            for s_id in speciality_ids:
+                speciality = session.query(Speciality).get(s_id)
+                if speciality is not None:
+                    self.specialities.append(speciality)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -223,6 +224,8 @@ class Doctor(Base):
         if relations:
             serialized['plans'] = [r.serialize(False) for r in self.plans]
             serialized['specialities'] = [r.serialize(False) for r in self.specialities]
+        if hasattr(self, 'distance'):
+            serialized['distance'] = self.distance
         return serialized
 
     def update(self, data):
