@@ -28,21 +28,32 @@
                   <label for="address">Dirección</label>
               </div>
           </div>
+          <div id="map"></div>
+          <input type="hidden" id="location" name="location" value="{{ doctor.location if doctor else '' }}"/>
           <div class="row">
               <div class="input-field col s6">
                   <select id="plan_ids" name="plan_ids" multiple>
                       <option value="" disabled selected>Seleccione planes</option>
                       {% for plan in plans %}
-                      <option value={{ plan.id }} {{ 'selected' if doctor and plan.id in doctor_plan_ids else ''}}>{{ plan.name }}</option>
+                          <option value={{ plan.id }} {{ 'selected' if doctor and plan.id in doctor_plan_ids else ''}}>{{ plan.name }}</option>
                       {% endfor %}
 
                   </select>
                   <label>Planes</label>
               </div>
           </div>
+          <div class="row">
+              <div class="input-field col s6">
+                  <select id="speciality_ids" name="speciality_ids" multiple>
+                      <option value="" disabled selected>Seleccione especialidades</option>
+                      {% for speciality in specialities %}
+                          <option value={{ speciality.id }} {{ 'selected' if doctor and speciality.id in doctor_speciality_ids else ''}}>{{ speciality.name }}</option>
+                      {% endfor %}
 
-          <div id="map"></div>
-            <input type="hidden" id="location" name="location" value="{{ doctor.location if doctor else '' }}"/>
+                  </select>
+                  <label>Especialidades</label>
+              </div>
+          </div>
 
 
         <button type="submit" class="btn btn-default">
@@ -62,6 +73,7 @@
 
         $(document).ready(function () {
             $('#plan_ids').material_select()
+            $('#speciality_ids').material_select()
         })
 
         $("#DoctorsForm").submit(function(event) {
@@ -119,7 +131,6 @@
 
         function initMap() {
             geocoder = new google.maps.Geocoder();
-            debugger
 
             address_location = document.getElementById("location").value;
             var latlng;

@@ -64,7 +64,8 @@ class DoctorCollection(Resource):
             address=data.get('address'),
             telephone=data.get('telephone'),
             location=data.get('location'),
-            plan_ids=data.get('plan_ids')
+            plan_ids=data.get('plan_ids'),
+            speciality_ids=data.get('speciality_ids'),
         )
 
         session.add(doctor)
