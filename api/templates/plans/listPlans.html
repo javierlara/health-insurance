@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+        <div class="row">
+            <h4>Planes</h4>
+            <a href="{{ url_for('new_plan') }}" class="btn right">Nuevo Plan</a>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th style="width: 70px;">Acciones</th>
+                    </tr>
+                 </thead>
+
+                <tbody>
+                    {% for plan in plans %}
+                    <tr>
+                        <td>{{ plan.name }}</td>
+                        <td>
+                            <a class="tooltipped" data-position="top" data-delay="25" data-tooltip="Editar" href="{{ url_for('edit_plan', plan_id=plan.id) }}"><i class="material-icons">mode_edit</i></a>
+                            <div class="tooltipped delete-action red-text text-darken-4 deletePlan" data-position="top" data-delay="25" data-tooltip="Borrar" data="{{ plan.id }}"><i class="material-icons">delete</i></div>
+                        </td>
+                    </tr>
+                    {% else %}
+                        <em>No hay todavía</em>
+                    {% endfor %}
+                </tbody>
+            </table>
+          <script type='text/javascript'>
+            $(".deletePlan").click(function(e) {
+                e.preventDefault();
+                var planId = $(this).attr("data");
+                $.ajax({
+                    type: "DELETE",
+                    url: 'api/plans/' + planId,
+                    success: function() {
+                        location.reload();
+                    },
+                    contentType : "application/json"
+                });
+            })
+        </script>
+  {% endif %}
+{% endblock %}

@@ -29,44 +29,75 @@ def login_required(f):
     return decorated_function
 
 
+
+
+
+
 @app.route('/health_centers/new', methods=['GET'])
 @login_required
 def new_center():
-    return render_template('newCenter.html')
+    return render_template('centers/newCenter.html')
 
 
 @app.route('/health_centers', methods=['GET'])
 @login_required
 def health_centers():
     centers = HealthCenterCollection.get_all_health_centers()
-    return render_template('listCenters.html', centers=centers)
+    return render_template('centers/listCenters.html', centers=centers)
 
 
 @app.route('/health_centers/edit/<int:center_id>', methods=['GET'])
 @login_required
 def edit_center(center_id):
     center = HealthCenter.get_health_center(center_id)
-    return render_template('newCenter.html', center=center)
+    return render_template('centers/newCenter.html', center=center)
 
 
 @app.route('/news/new', methods=['GET'])
 @login_required
 def new_news():
-    return render_template('newNews.html')
+    return render_template('news/newNews.html')
 
 
 @app.route('/news', methods=['GET'])
 @login_required
 def newses():
     newses = NewsCollection.get_all_news()
-    return render_template('listNews.html', newses=newses)
+    return render_template('news/listNews.html', newses=newses)
 
 
 @app.route('/news/edit/<int:news_id>', methods=['GET'])
 @login_required
 def edit_news(news_id):
     news = News.get_news(news_id)
-    return render_template('newNews.html', news=news)
+    return render_template('news/newNews.html', news=news)
+
+
+@app.route('/plans/new', methods=['GET'])
+@login_required
+def new_plan():
+    return render_template('plans/newPlan.html')
+
+
+@app.route('/plans', methods=['GET'])
+@login_required
+def plans():
+    plans = PlanCollection.get_all_plans()
+    return render_template('plans/listPlans.html', plans=plans)
+
+
+@app.route('/plans/edit/<int:plan_id>', methods=['GET'])
+@login_required
+def edit_plan(plan_id):
+    print(plan_id)
+    plan = Plan.get_plan(plan_id)
+    return render_template('plans/newPlan.html', plan=plan)
+
+
+
+
+
+
 
 
 @app.route('/home', methods=['GET'])
