@@ -64,7 +64,8 @@ class HealthCenterCollection(Resource):
             address=data.get('address'),
             telephone=data.get('telephone'),
             location=data.get('location'),
-            extradata=data.get('extradata')
+            extradata=data.get('extradata'),
+            plan_ids=data.get('plan_ids')
         )
 
         session.add(health_center)

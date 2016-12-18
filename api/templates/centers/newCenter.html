@@ -28,9 +28,22 @@
                   <label for="address">Dirección</label>
               </div>
           </div>
+          <div class="row">
+              <div class="input-field col s6">
+                  <select id="plan_ids" name="plan_ids" multiple>
+                      <option value="" disabled selected>Seleccione planes</option>
+                      {% for plan in plans %}
+                      <option value={{ plan.id }} {{ 'selected' if center and plan.id in center_plan_ids else ''}}>{{ plan.name }}</option>
+                      {% endfor %}
+
+                  </select>
+                  <label>Planes</label>
+              </div>
+          </div>
 
           <div id="map"></div>
             <input type="hidden" id="location" name="location" value="{{ center.location if center else '' }}"/>
+
 
         <button type="submit" class="btn btn-default">
             {% if center %}
@@ -46,6 +59,11 @@
         <h4>{{ error }}</h4>
       {% endfor %}
     <script type='text/javascript'>
+
+        $(document).ready(function () {
+            $('#plan_ids').material_select()
+        })
+
         $("#healthCentersForm").submit(function(event) {
             event.preventDefault();
             var $form = $( this ), url = $form.attr( 'action' );
@@ -148,6 +166,8 @@
                 });
             }
         }
+
+
 
 
       </script>

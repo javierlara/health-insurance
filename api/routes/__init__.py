@@ -36,7 +36,8 @@ def login_required(f):
 @app.route('/health_centers/new', methods=['GET'])
 @login_required
 def new_center():
-    return render_template('centers/newCenter.html')
+    plans = PlanCollection.get_all_plans()
+    return render_template('centers/newCenter.html', plans=plans)
 
 
 @app.route('/health_centers', methods=['GET'])
@@ -50,7 +51,14 @@ def health_centers():
 @login_required
 def edit_center(center_id):
     center = HealthCenter.get_health_center(center_id)
-    return render_template('centers/newCenter.html', center=center)
+    plans = PlanCollection.get_all_plans()
+    center_plan_ids = list(map(lambda x: x.id, center.plans))
+    print(center_plan_ids)
+    return render_template('centers/newCenter.html',
+                           center=center,
+                           plans=plans,
+                           center_plan_ids=center_plan_ids
+                           )
 
 
 @app.route('/news/new', methods=['GET'])

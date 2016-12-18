@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 
 from api.db import Base
 from sqlalchemy.dialects.postgresql import JSON
+from api.db import db_session as session
 
 
 class HealthCenter(Base):
@@ -19,12 +20,18 @@ class HealthCenter(Base):
     extradata = Column(JSON)
     deleted_at = Column(DateTime())
 
-    def __init__(self, name, address, telephone, location, extradata):
+    def __init__(self, name, address, telephone, location, extradata, plan_ids):
         self.name = name
         self.address = address
         self.telephone = telephone
         self.location = location
         self.extradata = extradata
+        self.plans = []
+
+        for id in plan_ids:
+            plan = session.query(Plan).get(id)
+            if plan is not None:
+                self.plans.append(plan)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -49,6 +56,12 @@ class HealthCenter(Base):
         self.telephone = data.get('telephone')
         self.location = data.get('location')
         self.extradata = data.get('extradata')
+        self.plans = []
+        if data.get('plan_ids') is not None:
+            for id in data.get('plan_ids'):
+                plan = session.query(Plan).get(id)
+                if plan is not None:
+                    self.plans.append(plan)
 
 
 class News(Base):
@@ -90,7 +103,6 @@ health_centers_plans = Table('health_centers_plans',
                              Base.metadata,
                              Column('health_center_id', Integer, ForeignKey('health_centers.id'), nullable=False),
                              Column('plan_id', Integer, ForeignKey('plans.id'), nullable=False),
-                             Column('deleted_at', DateTime, nullable=True),
                              PrimaryKeyConstraint('health_center_id', 'plan_id')
                              )
 
