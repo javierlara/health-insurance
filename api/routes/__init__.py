@@ -5,6 +5,7 @@ from .resources.news import NewsCollection, News
 from .resources.plan import Plan, PlanCollection
 from .resources.speciality import Speciality, SpecialityCollection
 from .resources.doctor import Doctor, DoctorCollection
+from .resources.cartilla import Cartilla
 from flask import render_template, request, session, redirect, url_for, flash, g
 from functools import wraps
 
@@ -20,6 +21,7 @@ api.add_resource(Speciality, '/api/specialities/<string:speciality_id>')
 api.add_resource(SpecialityCollection, '/api/specialities')
 api.add_resource(Doctor, '/api/doctors/<string:doctor_id>')
 api.add_resource(DoctorCollection, '/api/doctors')
+api.add_resource(Cartilla, '/api/cartilla')
 
 
 def logged():
@@ -157,7 +159,6 @@ def edit_doctor(doctor_id):
                            specialities=specialities,
                            doctor_speciality_ids=doctor_speciality_ids
                            )
-
 
 
 
