@@ -119,7 +119,8 @@ class Plan(Base):
         self.name = name
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        # return '<id {}>'.format(self.id)
+        return self.name
 
     def serialize(self, relations=True):
         serialized = {
@@ -253,6 +254,7 @@ class Member(Base):
     telephone = Column(String())
     plan_id = Column(Integer, ForeignKey('plans.id'))
     deleted_at = Column(DateTime())
+    plan = relationship('Plan', foreign_keys=plan_id)
 
     def __init__(self, name, address, telephone, plan_id):
         self.name = name

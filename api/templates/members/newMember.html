@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+        {% if member %}
+            <h5>Editar Socio</h5>
+        {% else %}
+            <h5>Nuevo Socio</h5>
+        {% endif %}
+      <div class="row">
+      <form id='MembersForm' class="col s12" role="form" method='POST' action="{{ '/api/members' + ('/' + member.id|string if member else '') }}" enctype='application/json'>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="name" id="name" class="validate" required value="{{ member.name if member else '' }}" />
+                <label for="name">Nombre</label>
+            </div>
+        </div>
+
+
+          <div class="row">
+              <div class="input-field col s6">
+                  <input type="text" name="telephone" id="telephone" class="validate" required value="{{ member.telephone if member else '' }}" />
+                  <label for="telephone">Teléfono</label>
+              </div>
+          </div>
+          <div class="row">
+              <div class="input-field col s6">
+                  <input type="text" name="address" id="address" class="validate" required value="{{ member.address if member else '' }}" />
+                  <label for="address">Dirección</label>
+              </div>
+          </div>
+          <div class="row">
+              <div class="input-field col s6">
+                  <select id="plan_id" name="plan_id">
+                      <option value="" disabled selected>Seleccione plan</option>
+                      {% for plan in plans %}
+                          <option value={{ plan.id }} {{ 'selected' if member and plan.id == member.plan_id else ''}}>{{ plan.name }}</option>
+                      {% endfor %}
+
+                  </select>
+                  <label>Plan</label>
+              </div>
+          </div>
+
+
+        <button type="submit" class="btn btn-default">
+            {% if member %}
+                Editar
+            {% else %}
+                Crear
+            {% endif %}
+        </button>
+        <button class="btn red darken-4" onclick="back()">Cancelar</button>
+      </form>
+      <br>
+      {% for error in errors %}
+        <h4>{{ error }}</h4>
+      {% endfor %}
+    <script type='text/javascript'>
+
+        $(document).ready(function () {
+            $('#plan_id').material_select()
+        })
+
+        $("#MembersForm").submit(function(event) {
+            event.preventDefault();
+            var $form = $( this ), url = $form.attr( 'action' );
+            var formData = JSON.stringify($form.serializeObject())
+            $.ajax({
+                {% if member %}
+                type: "PUT",
+                {% else %}
+                type: "POST",
+                {% endif %}
+                url: url,
+                data: formData,
+                success: function() {
+                    window.location.replace("{{ url_for('members') }}")
+                },
+                dataType: "json",
+                contentType : "application/json"
+            });
+        });
+
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        function back() {
+            window.location.replace("{{ url_for('members') }}");
+        }
+      </script>
+  {% endif %}
+{% endblock %}

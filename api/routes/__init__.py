@@ -5,6 +5,7 @@ from .resources.news import NewsCollection, News
 from .resources.plan import Plan, PlanCollection
 from .resources.speciality import Speciality, SpecialityCollection
 from .resources.doctor import Doctor, DoctorCollection
+from .resources.member import Member, MemberCollection
 from flask import render_template, request, session, redirect, url_for, flash, g
 from functools import wraps
 
@@ -20,6 +21,8 @@ api.add_resource(Speciality, '/api/specialities/<string:speciality_id>')
 api.add_resource(SpecialityCollection, '/api/specialities')
 api.add_resource(Doctor, '/api/doctors/<string:doctor_id>')
 api.add_resource(DoctorCollection, '/api/doctors')
+api.add_resource(Member, '/api/members/<string:member_id>')
+api.add_resource(MemberCollection, '/api/members')
 
 
 def logged():
@@ -149,7 +152,6 @@ def edit_doctor(doctor_id):
     doctor_plan_ids = list(map(lambda x: x.id, doctor.plans))
     specialities = SpecialityCollection.get_all_specialities()
     doctor_speciality_ids = list(map(lambda x: x.id, doctor.specialities))
-    print(doctor_speciality_ids)
     return render_template('doctors/newDoctor.html',
                            doctor=doctor,
                            plans=plans,
@@ -159,6 +161,29 @@ def edit_doctor(doctor_id):
                            )
 
 
+@app.route('/members/new', methods=['GET'])
+@login_required
+def new_member():
+    plans = PlanCollection.get_all_plans()
+    return render_template('members/newMember.html', plans=plans)
+
+
+@app.route('/members', methods=['GET'])
+@login_required
+def members():
+    members = MemberCollection.get_all_members()
+    return render_template('members/listMembers.html', members=members)
+
+
+@app.route('/members/edit/<int:member_id>', methods=['GET'])
+@login_required
+def edit_member(member_id):
+    member = Member.get_member(member_id)
+    plans = PlanCollection.get_all_plans()
+    return render_template('members/newMember.html',
+                           member=member,
+                           plans=plans,
+                           )
 
 
 
