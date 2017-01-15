@@ -186,6 +186,16 @@ def edit_member(member_id):
                            )
 
 
+@app.route('/doctors/<int:doctor_id>/schedule', methods=['GET'])
+@login_required
+def edit_schedule(doctor_id):
+    doctor = Doctor.get_doctor(doctor_id)
+    return render_template('doctors/editSchedule.html',
+                           doctor=doctor,
+                           )
+
+
+
 
 
 @app.route('/home', methods=['GET'])

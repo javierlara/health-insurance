@@ -10,7 +10,7 @@
                     <th>Nombre</th>
                     <th>Dirección</th>
                     <th>Teléfono</th>
-                    <th style="width: 70px;">Acciones</th>
+                    <th style="width: 100px;">Acciones</th>
                 </tr>
              </thead>
 
@@ -22,6 +22,7 @@
                     <td>{{ doctor.telephone }}</td>
                     <td>
                         <a class="tooltipped" data-position="top" data-delay="25" data-tooltip="Editar" href="{{ url_for('edit_doctor', doctor_id=doctor.id) }}"><i class="material-icons">mode_edit</i></a>
+                        <a class="tooltipped green-text text-darken-4" data-position="top" data-delay="25" data-tooltip="Cargar horarios" href="{{ url_for('edit_schedule', doctor_id=doctor.id) }}"><i class="material-icons">schedule</i></a>
                         <div class="tooltipped delete-action red-text text-darken-4 deleteDoctor" data-position="top" data-delay="25" data-tooltip="Borrar" data="{{ doctor.id }}"><i class="material-icons">delete</i></div>
                     </td>
                 </tr>

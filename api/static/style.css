@@ -25,6 +25,9 @@
 
 #calendar .day {
     text-align: center;
+}
+
+#calendar .day.selectable {
     cursor: pointer;
 }
 
@@ -36,4 +39,8 @@
 
 #calendar #today {
     font-weight: bold;
+}
+
+.calendarButton {
+    cursor:pointer;
 }
