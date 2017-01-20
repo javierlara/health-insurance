@@ -1,3 +1,4 @@
+import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
@@ -329,8 +330,8 @@ class Schedule(Base):
 
     def __init__(self, doctor_id, start, end):
         self.doctor_id = doctor_id
-        self.start = start
-        self.end = end
+        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0)
+        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -339,12 +340,11 @@ class Schedule(Base):
         return {
             'id': self.id,
             'doctor_id': self.doctor_id,
-            'start': self.start,
-            'end': self.end,
+            'start': str(self.start),
+            'end': str(self.end),
             'deleted_at': str(self.deleted_at)
         }
 
     def update(self, data):
-        self.doctor_id = data.get('doctor_id')
-        self.start = data.get('start')
-        self.end = data.get('end')
+        self.start = datetime.datetime.fromtimestamp(float(data.get('start'))/1000.0)
+        self.end = datetime.datetime.fromtimestamp(float(data.get('end'))/1000.0)

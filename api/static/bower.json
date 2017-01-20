@@ -15,6 +15,5 @@
     "tests"
   ],
   "dependencies": {
-    "fullcalendar": "^3.1.0"
   }
 }
