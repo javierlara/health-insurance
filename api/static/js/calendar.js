@@ -112,46 +112,134 @@ function createCalendar(date, doctorId) {
 }
 
 function setEvents(originalDate, doctorId) {
+    $('.prevMonth').off('click');
     $('.prevMonth').click(function() {
         originalDate.setMonth(originalDate.getMonth() - 1)
         createCalendar(originalDate, doctorId);
     });
 
+    $('.nextMonth').off('click');
     $('.nextMonth').click(function() {
         originalDate.setMonth(originalDate.getMonth() + 1)
         createCalendar(originalDate, doctorId);
     });
 
+    $('.day.selectable').off('click');
     $('.day.selectable').click(function() {
-        $('.day').removeClass('selected');
-        $(this).addClass('selected');
-        $.ajax({
-            type: "GET",
-            url: '/api/doctors/' + doctorId + '/schedule/' + $(this).data('date'),
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                if(xhr.status==404) {
-                    console.log(thrownError);
-                }
-            }
-        });
+        onSelectDay($(this), doctorId)
+    });
+
+    $('#saveScheduleButton').off('click');
+    $('#saveScheduleButton').click(function () {
+        saveSchedule(doctorId)
     });
 }
 
 function format(date) {
-    // var dd = date.getDate();
-    // var mm = date.getMonth()+1; //January is 0!
-    //
-    // var yyyy = date.getFullYear();
-    // if(dd<10){
-    //     dd='0'+dd;
-    // }
-    // if(mm<10){
-    //     mm='0'+mm;
-    // }
-    // return dd+'/'+mm+'/'+yyyy;
-
     return date.getTime();
+}
+
+function initTimeSelects() {
+    var i ,j;
+    for(i=8; i<20; i++) {
+        for(j=0; j<2; j++) {
+            item = i + ":" + (j===0 ? "00" : "30");
+            $('#scheduleSelect select').append($('<option>', {
+                value: item,
+                text : item
+            }));
+        }
+    }
+
+    $('#scheduleSelect select').material_select();
+}
+
+function showScheduleSelect(schedule) {
+    console.log(schedule);
+    $('#scheduleSelect select').val('');
+    $('#existing').val('');
+    if(schedule){
+        $('#existing').val(1);
+        var from = new Date(schedule.start);
+        var to = new Date(schedule.end);
+        $('#from').val(getHoursAndMinutes(from));
+        $('#to').val(getHoursAndMinutes(to));
+    }
+    $('#scheduleSelect select').material_select();
+}
+
+function onSelectDay(element, doctorId) {
+    var date = element.data('date');
+    var calendar = new Date(date);
+    $('.day').removeClass('selected');
+    element.addClass('selected');
+    $('.dayLabel').text(dateToString(calendar));
+
+    $.ajax({
+        type: "GET",
+        url: '/api/doctors/' + doctorId + '/schedule/' + date,
+        success: function(response) {
+            if(response.success){
+                showScheduleSelect(response.payload);
+            } else {
+                showScheduleSelect();
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            if(xhr.status==404) {
+                console.log(thrownError);
+            }
+        }
+    });
+}
+
+function dateToString(date) {
+    var monthNames = [
+      "Enero", "Febrero", "Marzo",
+      "Abril", "Mayo", "Junio", "Julio",
+      "Agosto", "Septiembre", "Octubre",
+      "Noviembre", "Diciembre"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    console.log(day, monthNames[monthIndex], year);
+    return day + ' de ' + monthNames[monthIndex] + ' de ' + year;
+}
+
+function saveSchedule(doctorId) {
+    var selected = getSelectedDate();
+    var startValue = $('#from').val().split(':');
+    var start = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), startValue[0], startValue[1], 0);
+    var endValue = $('#to').val().split(':');
+    var end = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), endValue[0], endValue[1], 0);
+    var existing = $('#existing').val()
+    $.ajax({
+        type: (existing?"PUT":"POST"),
+        data: JSON.stringify({start: start.getTime().toString(), end: end.getTime().toString()}),
+        dataType: 'json',
+        contentType: 'application/json',
+        url: '/api/doctors/' + doctorId + '/schedule',
+        success: function(response) {
+            $('#existing').val(1);
+            console.log(response)
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            if(xhr.status==404) {
+                console.log(thrownError);
+            }
+        }
+    });
+}
+
+function getSelectedDate() {
+    var selected = new Date($('.day.selected').data('date'));
+    return selected;
+}
+
+function getHoursAndMinutes(date) {
+    var minutes = (date.getMinutes()<10?'0':'') + date.getMinutes();
+    return date.getHours() + ':' + minutes
 }

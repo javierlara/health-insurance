@@ -42,8 +42,8 @@ class Schedule():
         print(doctor_id, file=sys.stderr)
         schedule = self.get_schedule(doctor_id, miliseconds)
         if schedule is None:
-            abort(404)
-        return schedule.serialize()
+            return {'success': False}
+        return {'success': True, 'payload': schedule.serialize()}
 
     def post(self, doctor_id):
         data = request.get_json()

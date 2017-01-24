@@ -209,10 +209,8 @@ def edit_member(member_id):
 @login_required
 def edit_schedule(doctor_id):
     doctor = Doctor.get_doctor(doctor_id)
-    times = []
     return render_template('doctors/editSchedule.html',
-                           doctor=doctor,
-                           times=times
+                           doctor=doctor
                            )
 
 

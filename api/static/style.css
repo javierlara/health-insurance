@@ -48,3 +48,7 @@
 #calendar .week-row {
     background-color: #efefef;
 }
+
+.hidden {
+    display: none;
+}
