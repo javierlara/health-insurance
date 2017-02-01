@@ -8,6 +8,7 @@ from .resources.plan import Plan, PlanCollection
 from .resources.speciality import Speciality, SpecialityCollection
 from .resources.doctor import Doctor, DoctorCollection
 from .resources.member import Member, MemberCollection
+from .resources.cartilla import Cartilla
 from flask import render_template, request, session, redirect, url_for, flash, g, jsonify
 from functools import wraps
 
@@ -23,6 +24,7 @@ api.add_resource(Speciality, '/api/specialities/<string:speciality_id>')
 api.add_resource(SpecialityCollection, '/api/specialities')
 api.add_resource(Doctor, '/api/doctors/<string:doctor_id>')
 api.add_resource(DoctorCollection, '/api/doctors')
+api.add_resource(Cartilla, '/api/cartilla')
 api.add_resource(Member, '/api/members/<string:member_id>')
 api.add_resource(MemberCollection, '/api/members')
 # api.add_resource(Schedule, '/api/doctors/<int:doctor_id>/schedule/<int:miliseconds>')
@@ -212,7 +214,6 @@ def edit_schedule(doctor_id):
     return render_template('doctors/editSchedule.html',
                            doctor=doctor
                            )
-
 
 
 
