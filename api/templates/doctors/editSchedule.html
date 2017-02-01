@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+    <div class="row">
+        <h4>{{ doctor.name }}</h4>
+    </div>
+    <div class="row">
+        <div class="col s8">
+            <div id='calendar'></div>
+        </div>
+        <div id="scheduleSelect" class="col s4">
+          <div class="input-field row">
+              <h5 class="dayLabel"></h5>
+          </div>
+          <div class="input-field row">
+              <select id="from" name="from">
+                  <option value="" disabled selected>Desde</option>
+              </select>
+              <label>Desde</label>
+          </div>
+
+          <div class="input-field row">
+              <select id="to" name="to">
+                  <option value="" disabled selected>Hasta</option>
+              </select>
+              <label>Hasta</label>
+          </div>
+            <input id='existing' name="existing" type="hidden" />
+          <div class="row">
+              <button id="saveScheduleButton" class="btn btn-default">Guardar</button>
+        </button>
+          </div>
+        </div>
+      </div>
+
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function() {
+            createCalendar(undefined, '{{ doctor.id }}');
+
+            initTimeSelects();
+        });
+    </script>
+
+
+ {% endif %}
+{% endblock %}
+
+
+
+
+
+
+

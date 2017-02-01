@@ -22,3 +22,33 @@
 }
 
 #map { height: 500px; width: auto;}
+
+#calendar .day {
+    text-align: center;
+}
+
+#calendar .day.selectable {
+    cursor: pointer;
+}
+
+#calendar .day.selected {
+    border: 1px;
+    background-color: #DEDEFF;
+    border-color: #CCCCCC;
+}
+
+#calendar #today {
+    font-weight: bold;
+}
+
+.calendarButton {
+    cursor:pointer;
+}
+
+#calendar .week-row {
+    background-color: #efefef;
+}
+
+.hidden {
+    display: none;
+}

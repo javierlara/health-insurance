@@ -1,3 +1,4 @@
+import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
@@ -119,7 +120,8 @@ class Plan(Base):
         self.name = name
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        # return '<id {}>'.format(self.id)
+        return self.name
 
     def serialize(self, relations=True):
         serialized = {
@@ -246,3 +248,106 @@ class Doctor(Base):
                 if speciality is not None:
                     self.specialities.append(speciality)
 
+
+class Member(Base):
+    __tablename__ = 'members'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String())
+    address = Column(String())
+    telephone = Column(String())
+    plan_id = Column(Integer, ForeignKey('plans.id'))
+    deleted_at = Column(DateTime())
+    plan = relationship('Plan', foreign_keys=plan_id)
+
+    def __init__(self, name, address, telephone, plan_id):
+        self.name = name
+        self.address = address
+        self.telephone = telephone
+        self.plan_id = plan_id
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'address': self.address,
+            'telephone': self.telephone,
+            'plan_id': self.plan_id,
+            'deleted_at': str(self.deleted_at)
+        }
+
+    def update(self, data):
+        self.name = data.get('name')
+        self.address = data.get('address')
+        self.telephone = data.get('telephone')
+        self.plan_id = data.get('plan_id')
+
+
+class Appointment(Base):
+    __tablename__ = 'appointments'
+
+    id = Column(Integer, primary_key=True)
+    doctor_id = Column(Integer, ForeignKey('doctors.id'))
+    member_id = Column(Integer, ForeignKey('members.id'))
+    start = Column(DateTime())
+    end = Column(DateTime())
+    deleted_at = Column(DateTime())
+
+    def __init__(self, doctor_id, member_id, start, end):
+        self.doctor_id = doctor_id
+        self.member_id = member_id
+        self.start = start
+        self.end = end
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'doctor_id': self.doctor_id,
+            'member_id': self.member_id,
+            'start': self.start,
+            'end': self.end,
+            'deleted_at': str(self.deleted_at)
+        }
+
+    def update(self, data):
+        self.doctor_id = data.get('doctor_id')
+        self.member_id = data.get('member_id')
+        self.start = data.get('start')
+        self.end = data.get('end')
+
+
+class Schedule(Base):
+    __tablename__ = 'schedules'
+
+    id = Column(Integer, primary_key=True)
+    doctor_id = Column(Integer, ForeignKey('doctors.id'))
+    start = Column(DateTime())
+    end = Column(DateTime())
+    deleted_at = Column(DateTime())
+
+    def __init__(self, doctor_id, start, end):
+        self.doctor_id = doctor_id
+        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0)
+        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0)
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'doctor_id': self.doctor_id,
+            'start': str(self.start),
+            'end': str(self.end),
+            'deleted_at': str(self.deleted_at)
+        }
+
+    def update(self, data):
+        self.start = datetime.datetime.fromtimestamp(float(data.get('start'))/1000.0)
+        self.end = datetime.datetime.fromtimestamp(float(data.get('end'))/1000.0)
