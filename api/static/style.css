@@ -52,3 +52,7 @@
 .hidden {
     display: none;
 }
+
+.filled {
+    background-color: #A5D6A7;
+}

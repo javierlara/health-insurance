@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy import Table
+from sqlalchemy import extract
 from sqlalchemy.orm import relationship
 
 from api.db import Base
@@ -346,6 +347,11 @@ class Schedule(Base):
             'start': str(self.start),
             'end': str(self.end),
             'deleted_at': str(self.deleted_at)
+        }
+
+    def getDay(self):
+        return {
+            'day': self.start.day
         }
 
     def update(self, data):

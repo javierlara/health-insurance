@@ -36,7 +36,7 @@ function createCalendar(date, doctorId) {
     var TR_start_week = '<TR class="week-row">';
     var TR_end = '</TR>';
     var TD_start = '<TD WIDTH="30" class="day">';
-    var TD_start_date_date = '<TD WIDTH="30" class="day selectable" data-date=';
+    var TD_start_data_date = '<TD WIDTH="30" class="day selectable" data-date=';
     var TD_end = '</TD>';
 
     cal =  '<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=0 BORDERCOLOR=BBBBBB><TR><TD>';
@@ -84,10 +84,10 @@ function createCalendar(date, doctorId) {
 
                 if( today==format(Calendar) ) {
                     // HIGHLIGHT TODAY'S DATE
-                    cal += TD_start_date_date + format(Calendar) + " id='today'>" + day + TD_end;
+                    cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " id='today'>" + day + TD_end;
                 } else {
                     // PRINTS DAY
-                    cal += TD_start_date_date + format(Calendar) + ">" + day + TD_end;
+                    cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
                 }
             }
 
@@ -108,6 +108,8 @@ function createCalendar(date, doctorId) {
     $('#calendar').append(cal);
 
     setEvents(originalDate, doctorId);
+
+    highlightNotEmptyDays(doctorId, originalDate.getMonth() + 1, originalDate.getFullYear());
 
 }
 
@@ -139,6 +141,32 @@ function format(date) {
     return date.getTime();
 }
 
+function getDay(date) {
+    return date.getDate();
+}
+
+function highlightNotEmptyDays(doctorId, month, year) {
+    $.ajax({
+        type: "GET",
+        url: '/api/doctors/' + doctorId + '/days/' + month + '/' + year,
+        success: function(response) {
+            if(response.success){
+                console.log(response.payload);
+                response.payload.forEach(function(item) {
+                    $('.day.selectable[data-day="' + item.day+ '"]').addClass('filled');
+                })
+            } else {
+
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            if(xhr.status==404) {
+                console.log(thrownError);
+            }
+        }
+    });
+}
+
 function initTimeSelects() {
     var i ,j;
     for(i=8; i<20; i++) {
@@ -156,6 +184,7 @@ function initTimeSelects() {
 
 function showScheduleSelect(schedule) {
     console.log(schedule);
+    $('#scheduleSelect').removeClass('hidden');
     $('#scheduleSelect select').val('');
     $('#existing').val('');
     if(schedule){
@@ -224,6 +253,7 @@ function saveSchedule(doctorId) {
         url: '/api/doctors/' + doctorId + '/schedule',
         success: function(response) {
             $('#existing').val(1);
+            $('.day.selected').addClass('filled');
             console.log(response)
         },
         error: function(xhr, ajaxOptions, thrownError) {
