@@ -27,7 +27,6 @@ api.add_resource(DoctorCollection, '/api/doctors')
 api.add_resource(Cartilla, '/api/cartilla')
 api.add_resource(Member, '/api/members/<string:member_id>')
 api.add_resource(MemberCollection, '/api/members')
-# api.add_resource(Schedule, '/api/doctors/<int:doctor_id>/schedule/<int:miliseconds>')
 
 
 @app.route('/api/doctors/<int:doctor_id>/schedule/<int:miliseconds>', methods=['GET'])
@@ -44,6 +43,13 @@ def post_schedule(doctor_id):
 def put_schedule(doctor_id):
     schedule = Schedule()
     return jsonify(schedule.put(doctor_id))
+
+@app.route('/api/doctors/<int:doctor_id>/days/<int:month>/<int:year>', methods=['GET'])
+def get_schedule_days_by_month_and_year(doctor_id, month, year):
+    schedule = Schedule()
+    a = schedule.getDays(doctor_id, month, year)
+    print(a)
+    return jsonify(a)
 
 
 def logged():

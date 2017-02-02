@@ -59,7 +59,13 @@ class Schedule():
         self.update_schedule(schedule, data)
         return schedule.serialize()
 
-
-
-
-
+    @staticmethod
+    def getDays(doctor_id, month, year):
+        query = session.query(models.Schedule) \
+            .filter(models.Schedule.doctor_id == doctor_id) \
+            .filter(extract('month', models.Schedule.start) == month) \
+            .filter(extract('year', models.Schedule.start) == year) \
+            .filter(models.Schedule.deleted_at == None)
+        schedules = query.all()
+        print(schedules)
+        return {'success': True, 'payload': [r.getDay() for r in schedules]}
