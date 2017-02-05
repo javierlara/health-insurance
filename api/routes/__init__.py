@@ -1,6 +1,6 @@
-import sys
 from flask.ext.restful import Api
 from api import app
+from api.routes.login import login_required
 from .resources.schedule import Schedule
 from .resources.health_center import HealthCenter, HealthCenterCollection
 from .resources.news import NewsCollection, News
@@ -9,8 +9,8 @@ from .resources.speciality import Speciality, SpecialityCollection
 from .resources.doctor import Doctor, DoctorCollection
 from .resources.member import Member, MemberCollection
 from .resources.cartilla import Cartilla
-from flask import render_template, request, session, redirect, url_for, flash, g, jsonify
-from functools import wraps
+from flask import render_template, jsonify
+
 
 api = Api(app)
 
@@ -52,17 +52,7 @@ def get_schedule_days_by_month_and_year(doctor_id, month, year):
     return jsonify(a)
 
 
-def logged():
-    return 'logged_in' in session and session['logged_in']
 
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not logged():
-            return redirect(url_for('login', next=request.url))
-        return f(*args, **kwargs)
-    return decorated_function
 
 
 
@@ -227,32 +217,5 @@ def edit_schedule(doctor_id):
 @login_required
 def home():
     return render_template('home.html')
-
-@app.route('/')
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    next = request.args.get('next')
-    if not next:
-        next = url_for('home')
-    if 'logged_in' in session and session['logged_in']:
-        return redirect(next)
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Usuario inválido'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Contraseña inválida'
-        else:
-            session['logged_in'] = True
-            flash('Iniciaste sesión')
-            return redirect(request.form['next'])
-    return render_template('login.html', error=error, next=next)
-
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash('Saliste de la sesión')
-    return redirect(url_for('login'))
 
 
