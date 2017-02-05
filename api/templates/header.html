@@ -5,6 +5,10 @@
         </a>
           <ul class="right hide-on-med-and-down">
               {% if session.logged_in %}
+{#                  <li>#}
+{#                    <span>{{ current_user.username }}</span>#}
+{#                  </li>#}
+                {% if not current_user.is_doctor %}
                   <li>
                     <a href="{{ url_for('health_centers') }}">Centros de Salud</a>
                   </li>
@@ -23,6 +27,7 @@
                   <li>
                     <a href="{{ url_for('members') }}">Socios</a>
                   </li>
+                {% endif %}
                   <li>
                     <a class="indigo lighten-2" href="{{ url_for('logout') }}">Salir</a>
                   </li>
