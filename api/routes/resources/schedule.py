@@ -39,7 +39,7 @@ class Schedule():
         session.commit()
 
     def get(self, doctor_id, miliseconds):
-        print(doctor_id, file=sys.stderr)
+        # print(doctor_id, file=sys.stderr)
         schedule = self.get_schedule(doctor_id, miliseconds)
         if schedule is None:
             return {'success': False}
@@ -67,5 +67,24 @@ class Schedule():
             .filter(extract('year', models.Schedule.start) == year) \
             .filter(models.Schedule.deleted_at == None)
         schedules = query.all()
-        print(schedules)
         return {'success': True, 'payload': [r.getDay() for r in schedules]}
+
+    @staticmethod
+    def getMonthSchedule(doctor_id, month, year):
+        query = session.query(models.Schedule) \
+            .filter(models.Schedule.doctor_id == doctor_id) \
+            .filter(extract('month', models.Schedule.start) == month) \
+            .filter(extract('year', models.Schedule.start) == year) \
+            .filter(models.Schedule.deleted_at == None)
+        schedules = query.all()
+        return {'success': True, 'payload': [r.get_slots() for r in schedules]}
+
+    @staticmethod
+    def getAvailableSchedule(doctor_id, month, year):
+        query = session.query(models.Schedule) \
+            .filter(models.Schedule.doctor_id == doctor_id) \
+            .filter(extract('month', models.Schedule.start) == month) \
+            .filter(extract('year', models.Schedule.start) == year) \
+            .filter(models.Schedule.deleted_at == None)
+        schedules = query.all()
+        return {'success': True, 'payload': [r.getSchedule() for r in schedules]}
