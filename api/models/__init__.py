@@ -298,11 +298,13 @@ class Appointment(Base):
     end = Column(DateTime())
     deleted_at = Column(DateTime())
 
-    def __init__(self, doctor_id, member_id, start, end):
+    def __init__(self, doctor_id, member_id, start, end=None):
         self.doctor_id = doctor_id
         self.member_id = member_id
-        self.start = start
-        self.end = end
+        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0)
+        if end is None:
+            end = start + (30*60*1000) # agrego media hora
+        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -358,3 +360,61 @@ class Schedule(Base):
     def update(self, data):
         self.start = datetime.datetime.fromtimestamp(float(data.get('start'))/1000.0)
         self.end = datetime.datetime.fromtimestamp(float(data.get('end'))/1000.0)
+
+    def get_slots(self):
+        query = session.query(Appointment) \
+            .filter(Appointment.doctor_id == self.doctor_id) \
+            .filter(extract('day', Appointment.start) == self.start.day) \
+            .filter(extract('month', Appointment.start) == self.start.month) \
+            .filter(extract('year', Appointment.start) == self.start.year) \
+            .filter(Appointment.deleted_at == None)
+        appointments = query.all()
+        slots = self.get_available_slots(appointments)
+        return {
+            'day': self.start.day,
+            'slots': [{'start': s.start, 'end': s.end} for s in slots]
+        }
+
+    def get_available_slots(self, appointments):
+        schedules = []
+        appointments_slots = []
+        delta = datetime.timedelta(minutes=30)
+
+        for schedule in Slot.perdelta(self.start, self.end, delta):
+            schedules.append(Slot(schedule, schedule + delta))
+
+        for appointment in appointments:
+            appointments_slots.append(Slot(appointment.start, appointment.end))
+
+        available_slots = list(set(schedules) - set(appointments_slots))
+        available_slots.sort(key=lambda r: r.start)
+
+        return available_slots
+
+
+class Slot:
+    start = ''
+    end = ''
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def __repr__(self):
+        return str(self.start) + ' - ' + str(self.end)
+
+    def __eq__(self, other):
+        return self.start == other.start and self.end == other.end
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return int(self.start.timestamp()*1000)
+
+    @staticmethod
+    def perdelta(start, end, delta):
+        curr = start
+        while curr < end:
+            yield curr
+            curr += delta

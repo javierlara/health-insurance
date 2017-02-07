@@ -1,6 +1,7 @@
 from flask.ext.restful import Api
 from api import app
 from api.routes.login import login_required
+from api.routes.resources.appointment import Appointment
 from .resources.schedule import Schedule
 from .resources.health_center import HealthCenter, HealthCenterCollection
 from .resources.news import NewsCollection, News
@@ -29,6 +30,8 @@ api.add_resource(Member, '/api/members/<string:member_id>')
 api.add_resource(MemberCollection, '/api/members')
 
 
+#SCHEDULES
+
 @app.route('/api/doctors/<int:doctor_id>/schedule/<int:miliseconds>', methods=['GET'])
 def get_schedule(doctor_id, miliseconds):
     schedule = Schedule()
@@ -48,13 +51,21 @@ def put_schedule(doctor_id):
 def get_schedule_days_by_month_and_year(doctor_id, month, year):
     schedule = Schedule()
     a = schedule.getDays(doctor_id, month, year)
-    print(a)
     return jsonify(a)
 
+@app.route('/api/doctors/<int:doctor_id>/schedule/<int:month>/<int:year>', methods=['GET'])
+def get_schedule_schedule_by_month_and_year(doctor_id, month, year):
+    schedule = Schedule()
+    a = schedule.getMonthSchedule(doctor_id, month, year)
+    return jsonify(a)
 
+#APPOINTMENTS
 
-
-
+@app.route('/api/appointment', methods=['POST'])
+# Recibe doctor_id, member_id, start
+def post_appointment():
+    appointment = Appointment()
+    return jsonify(appointment.post())
 
 
 
