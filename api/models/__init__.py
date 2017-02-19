@@ -260,13 +260,15 @@ class Member(Base):
     telephone = Column(String())
     plan_id = Column(Integer, ForeignKey('plans.id'))
     deleted_at = Column(DateTime())
+    member_number = Column(Integer)
     plan = relationship('Plan', foreign_keys=plan_id)
 
-    def __init__(self, name, address, telephone, plan_id):
+    def __init__(self, name, address, telephone, plan_id, member_number):
         self.name = name
         self.address = address
         self.telephone = telephone
         self.plan_id = plan_id
+        self.member_number = member_number
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -278,6 +280,7 @@ class Member(Base):
             'address': self.address,
             'telephone': self.telephone,
             'plan_id': self.plan_id,
+            'member_number' : self.member_number,
             'deleted_at': str(self.deleted_at)
         }
 
@@ -286,6 +289,7 @@ class Member(Base):
         self.address = data.get('address')
         self.telephone = data.get('telephone')
         self.plan_id = data.get('plan_id')
+        self.member_number = data.get('member_number')
 
 
 class Appointment(Base):

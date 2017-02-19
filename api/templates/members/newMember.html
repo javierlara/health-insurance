@@ -8,13 +8,18 @@
         {% endif %}
       <div class="row">
       <form id='MembersForm' class="col s12" role="form" method='POST' action="{{ '/api/members' + ('/' + member.id|string if member else '') }}" enctype='application/json'>
-        <div class="row">
+          <div class="row">
+              <div class="input-field col s6">
+                  <input type="text" name="member_number" id="member_number" class="validate" required value="{{ member.member_number if member else '' }}" />
+                  <label for="member_number">Nro de socio</label>
+              </div>
+          </div>
+          <div class="row">
             <div class="input-field col s6">
                 <input type="text" name="name" id="name" class="validate" required value="{{ member.name if member else '' }}" />
                 <label for="name">Nombre</label>
             </div>
         </div>
-
 
           <div class="row">
               <div class="input-field col s6">

@@ -67,6 +67,24 @@ def post_appointment():
     appointment = Appointment()
     return jsonify(appointment.post())
 
+@app.route('/api/appointment/<int:appointment_id>', methods=['DELETE'])
+def delete_appointment(appointment_id):
+    appointment = Appointment()
+    return jsonify(appointment.delete(appointment_id))
+
+@app.route('/api/appointment/filter', methods=['GET'])
+# Recibe doctor_id y/o member_id por query param
+def filter_appointment():
+    appointment = Appointment()
+    return jsonify(appointment.get_by())
+
+#MEMBERS
+@app.route('/api/members/number/<string:member_number>', methods=['GET'])
+def get_member_by_number(member_number):
+    member = Member()
+    return jsonify(member.get_by_number(member_number))
+
+
 
 
 
