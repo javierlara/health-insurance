@@ -9,12 +9,14 @@ from api import models
 from api.db import db_session as session
 from sqlalchemy import extract
 
+from api.models import get_time
+
 
 class Schedule():
 
     @staticmethod
     def get_schedule(doctor_id, miliseconds):
-        date_query = datetime.datetime.fromtimestamp(float(miliseconds) / 1000.0, tz=pytz.utc)
+        date_query = get_time(miliseconds)
         query = session.query(models.Schedule) \
             .filter(models.Schedule.doctor_id == doctor_id) \
             .filter(extract('day', models.Schedule.start) == date_query.day)\

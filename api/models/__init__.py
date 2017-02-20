@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 from api.db import Base
 from sqlalchemy.dialects.postgresql import JSON
 from api.db import db_session as session
+from api.models.utils import get_time
 
 
 class HealthCenter(Base):
@@ -307,10 +308,10 @@ class Appointment(Base):
     def __init__(self, doctor_id, member_id, start, end=None):
         self.doctor_id = doctor_id
         self.member_id = member_id
-        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0, tz=pytz.utc)
+        self.start = get_time(start)
         if end is None:
             end = start + (30*60*1000) # agrego media hora
-        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0, tz=pytz.utc)
+        self.end = get_time(end)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -343,8 +344,8 @@ class Schedule(Base):
 
     def __init__(self, doctor_id, start, end):
         self.doctor_id = doctor_id
-        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0, tz=pytz.utc)
-        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0, tz=pytz.utc)
+        self.start = get_time(start)
+        self.end = get_time(end)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -364,8 +365,8 @@ class Schedule(Base):
         }
 
     def update(self, data):
-        self.start = datetime.datetime.fromtimestamp(float(data.get('start'))/1000.0, tz=pytz.utc)
-        self.end = datetime.datetime.fromtimestamp(float(data.get('end'))/1000.0, tz=pytz.utc)
+        self.start = get_time(data.get('start'))
+        self.end = get_time(data.get('end'))
 
     def get_slots(self):
         query = session.query(Appointment) \
