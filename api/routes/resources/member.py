@@ -11,6 +11,13 @@ class Member(Resource):
         return session.query(models.Member).get(member_id)
 
     @staticmethod
+    def get_member_by_number(member_number):
+        query = session.query(models.Member) \
+            .filter(models.Member.member_number == member_number) \
+            .filter(models.Member.deleted_at == None)
+        return query.first()
+
+    @staticmethod
     def delete_member(member):
         member.deleted_at = datetime.utcnow()
         session.commit()
@@ -19,6 +26,12 @@ class Member(Resource):
     def update_member(member, data):
         member.update(data)
         session.commit()
+
+    def get_by_number(self, member_number):
+        member = self.get_member_by_number(member_number)
+        if member is None:
+            abort(404)
+        return member.serialize()
 
     def get(self, member_id):
         member = self.get_member(member_id)
@@ -63,7 +76,8 @@ class MemberCollection(Resource):
             name=data.get('name'),
             address=data.get('address'),
             telephone=data.get('telephone'),
-            plan_id=data.get('plan_id')
+            plan_id=data.get('plan_id'),
+            member_number=data.get('member_number')
         )
 
         session.add(member)
