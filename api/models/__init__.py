@@ -307,10 +307,10 @@ class Appointment(Base):
     def __init__(self, doctor_id, member_id, start, end=None):
         self.doctor_id = doctor_id
         self.member_id = member_id
-        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0)
+        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0, tz=pytz.utc)
         if end is None:
             end = start + (30*60*1000) # agrego media hora
-        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0)
+        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0, tz=pytz.utc)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -364,8 +364,8 @@ class Schedule(Base):
         }
 
     def update(self, data):
-        self.start = datetime.datetime.fromtimestamp(float(data.get('start'))/1000.0)
-        self.end = datetime.datetime.fromtimestamp(float(data.get('end'))/1000.0)
+        self.start = datetime.datetime.fromtimestamp(float(data.get('start'))/1000.0, tz=pytz.utc)
+        self.end = datetime.datetime.fromtimestamp(float(data.get('end'))/1000.0, tz=pytz.utc)
 
     def get_slots(self):
         query = session.query(Appointment) \

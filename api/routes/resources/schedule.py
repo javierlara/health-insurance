@@ -1,6 +1,7 @@
 import datetime
 import sys
 
+import pytz
 from flask import request
 from flask.ext.restful import abort, Resource
 
@@ -13,7 +14,7 @@ class Schedule():
 
     @staticmethod
     def get_schedule(doctor_id, miliseconds):
-        date_query = datetime.datetime.fromtimestamp(float(miliseconds) / 1000.0)
+        date_query = datetime.datetime.fromtimestamp(float(miliseconds) / 1000.0, tz=pytz.utc)
         query = session.query(models.Schedule) \
             .filter(models.Schedule.doctor_id == doctor_id) \
             .filter(extract('day', models.Schedule.start) == date_query.day)\
