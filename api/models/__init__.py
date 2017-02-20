@@ -1,4 +1,6 @@
 import datetime
+
+import pytz
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import PrimaryKeyConstraint
@@ -341,8 +343,8 @@ class Schedule(Base):
 
     def __init__(self, doctor_id, start, end):
         self.doctor_id = doctor_id
-        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0)
-        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0)
+        self.start = datetime.datetime.fromtimestamp(float(start)/1000.0, tz=pytz.utc)
+        self.end = datetime.datetime.fromtimestamp(float(end)/1000.0, tz=pytz.utc)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
