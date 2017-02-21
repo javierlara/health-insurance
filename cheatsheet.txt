@@ -15,3 +15,9 @@ pip freeze > requirements.txt -> despues de un pip install, para guardar los paq
 
 python manage.py runserver
 python app.py
+
+
+HEROKU!
+
+heroku logs --tail --remote stage -> logs en staging
+heroku pg:psql --remote stage -> DB
