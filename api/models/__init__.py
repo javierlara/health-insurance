@@ -338,9 +338,9 @@ class Schedule(Base):
 
     id = Column(Integer, primary_key=True)
     doctor_id = Column(Integer, ForeignKey('doctors.id'))
-    start = Column(DateTime(timezone=True))
-    end = Column(DateTime(timezone=True))
-    deleted_at = Column(DateTime(timezone=True))
+    start = Column(DateTime())
+    end = Column(DateTime())
+    deleted_at = Column(DateTime())
 
     def __init__(self, doctor_id, start, end):
         self.doctor_id = doctor_id
