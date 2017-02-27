@@ -1,4 +1,4 @@
-function createCalendar(date, doctorId) {
+function createCalendar(date, doctorId, new_appointment) {
 
     $('#calendar').empty();
 
@@ -107,13 +107,15 @@ function createCalendar(date, doctorId) {
     //  PRINT CALENDAR
     $('#calendar').append(cal);
 
-    setEvents(originalDate, doctorId);
+    new_appointment = typeof new_appointment !== 'undefined' ? new_appointment : false;
 
-    highlightNotEmptyDays(doctorId, originalDate.getMonth() + 1, originalDate.getFullYear());
+    setEvents(originalDate, doctorId, new_appointment);
+
+    highlightNotEmptyDays(doctorId, originalDate.getMonth() + 1, originalDate.getFullYear(), new_appointment);
 
 }
 
-function setEvents(originalDate, doctorId) {
+function setEvents(originalDate, doctorId, new_appointment) {
     $('.prevMonth').off('click');
     $('.prevMonth').click(function() {
         originalDate.setMonth(originalDate.getMonth() - 1)
@@ -128,7 +130,11 @@ function setEvents(originalDate, doctorId) {
 
     $('.day.selectable').off('click');
     $('.day.selectable').click(function() {
-        onSelectDay($(this), doctorId)
+        if(new_appointment) {
+            onSelectDayNewAppointment($(this), doctorId);
+        } else {
+            onSelectDay($(this), doctorId)
+        }
     });
 
     $('#saveScheduleButton').off('click');
@@ -145,15 +151,24 @@ function getDay(date) {
     return date.getDate();
 }
 
-function highlightNotEmptyDays(doctorId, month, year) {
+var globalSchedule = [];
+
+function highlightNotEmptyDays(doctorId, month, year, new_appointment) {
+    var url = '/api/doctors/' + doctorId + '/days/' + month + '/' + year;
+    if(new_appointment) {
+        url = '/api/doctors/' + doctorId + '/schedule/' + month + '/' + year;
+    }
     $.ajax({
         type: "GET",
-        url: '/api/doctors/' + doctorId + '/days/' + month + '/' + year,
+        url: url,
         success: function(response) {
             if(response.success){
                 console.log(response.payload);
+                globalSchedule = response.payload;
                 response.payload.forEach(function(item) {
-                    $('.day.selectable[data-day="' + item.day+ '"]').addClass('filled');
+                    if(!new_appointment || (new_appointment && item.slots.length > 0)) {
+                        $('.day.selectable[data-day="' + item.day+ '"]').addClass('filled');
+                    }
                 })
             } else {
 
@@ -187,7 +202,7 @@ function showScheduleSelect(schedule) {
     $('#scheduleSelect').removeClass('hidden');
     $('#scheduleSelect select').val('');
     $('#existing').val('');
-    if(schedule){
+    if (schedule) {
         $('#existing').val(1);
         var from = new Date(schedule.start);
         var to = new Date(schedule.end);
@@ -204,9 +219,11 @@ function onSelectDay(element, doctorId) {
     element.addClass('selected');
     $('.dayLabel').text(dateToString(calendar));
 
+    var url = '/api/doctors/' + doctorId + '/schedule/' + date;
+
     $.ajax({
         type: "GET",
-        url: '/api/doctors/' + doctorId + '/schedule/' + date,
+        url: url,
         success: function(response) {
             if(response.success){
                 showScheduleSelect(response.payload);
@@ -219,6 +236,41 @@ function onSelectDay(element, doctorId) {
                 console.log(thrownError);
             }
         }
+    });
+}
+
+function onSelectDayNewAppointment(element, doctorId) {
+    console.log(globalSchedule);
+
+    var date = element.data('date');
+    var calendar = new Date(date);
+    $('.day').removeClass('selected');
+    element.addClass('selected');
+
+    $('#date').val('');
+    if (globalSchedule) {
+        var result = globalSchedule.filter(function( obj ) {
+          return obj.day == calendar.getDate();
+        });
+
+        $('#date').find('option').remove();
+        $('#date').append('<option></option>');
+
+        if(result.length > 0) {
+            $.each(result[0].slots, function (i, slot) {
+                var slotDate = new Date(slot.start.replace('GMT',''));
+                $('#date').append($('<option>', {
+                    value: format(slotDate),
+                    text : getHoursAndMinutes(slotDate)
+                }));
+            });
+        }
+
+    }
+
+    $('#date').select2({
+        placeholder: "Turno",
+        minimumResultsForSearch: Infinity
     });
 }
 

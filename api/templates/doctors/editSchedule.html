@@ -37,7 +37,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
     <script language="javascript" type="text/javascript">
         $(document).ready(function() {
-            createCalendar(undefined, '{{ doctor.id }}');
+            createCalendar(undefined, '{{ doctor.id }}', false);
 
             initTimeSelects();
         });

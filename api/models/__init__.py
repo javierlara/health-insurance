@@ -304,6 +304,7 @@ class Appointment(Base):
     start = Column(DateTime())
     end = Column(DateTime())
     deleted_at = Column(DateTime())
+    member = relationship('Member', foreign_keys=member_id)
 
     def __init__(self, doctor_id, member_id, start, end=None):
         self.doctor_id = doctor_id

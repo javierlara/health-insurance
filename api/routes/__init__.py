@@ -241,6 +241,40 @@ def edit_schedule(doctor_id):
                            )
 
 
+@app.route('/doctors/<int:doctor_id>/appointments', methods=['GET'])
+@login_required
+def appointments(doctor_id):
+    doctor_appointments = Appointment.get_appointments_by(doctor_id=doctor_id)
+    return render_template('doctors/listAppointments.html',
+                           appointments=doctor_appointments,
+                           doctor_id=doctor_id
+                           )
+
+@app.route('/doctors/<int:doctor_id>/appointments/new', methods=['GET'])
+@login_required
+def new_appointment(doctor_id):
+    members = MemberCollection.get_all_members()
+    members_object = {}
+    for member in members:
+        key = str(member.member_number) + ' - ' + member.name
+        members_object[key] = member.id
+    return render_template('doctors/newAppointment.html', members=members, members_object=members_object, doctor_id=doctor_id)
+
+
+@app.route('/doctors/<int:doctor_id>/appointments/edit/<int:appointment_id>', methods=['GET'])
+@login_required
+def edit_appointment(doctor_id, appointment_id):
+    appointment = Appointment.get_appointment(appointment_id)
+    members = MemberCollection.get_all_members()
+    members_object = {}
+    for member in members:
+        key = str(member.member_number) + ' - ' + member.name
+        members_object[key] = member.id
+    return render_template('doctors/newAppointment.html',
+                           members=members, members_object=members_object, doctor_id=doctor_id,
+                           appointment=appointment
+                           )
+
 
 @app.route('/home', methods=['GET'])
 @login_required

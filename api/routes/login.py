@@ -22,11 +22,14 @@ def login_required(function):
     return decorated_function
 
 
+@app.route('/')
 @app.route("/login", methods=["GET", "POST"])
 def login():
     next = f.request.args.get('next')
     if not next:
         next = f.url_for('home')
+    if 'logged_in' in f.session and f.session['logged_in']:
+        return f.redirect(next)
     error = None
     if f.request.method == 'POST':
         username = f.request.form['username']
@@ -41,7 +44,7 @@ def login():
         else:
             if user is None:
                 error = 'Usuario inválido'
-            else :
+            else:
                 error = 'Contraseña inválida'
     return f.render_template('login.html', error=error, next=next)
 
