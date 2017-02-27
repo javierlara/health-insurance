@@ -1,0 +1,191 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+        {% if appointment %}
+            <h5>Editar Turno</h5>
+        {% else %}
+            <h5>Nuevo Turno</h5>
+        {% endif %}
+
+      <div class="row">
+      <form id='AppointmentsForm' class="col s12" role="form" method='POST' action="{{ '/api/appointment' + ('/' + appointment.id|string if appointment else '') }}" enctype='application/json'>
+          <input type="hidden" value="{{ doctor_id }}" name="doctor_id" id="doctor_id"/>
+{#          <div class="row">#}
+{#              <div class="input-field col s1">#}
+{#                  <select id="month" name="month">#}
+{#                      <option></option>#}
+{#                  </select>#}
+{#              </div>#}
+{#              <div class="input-field col s1">#}
+{#                  <select id="year" name="year">#}
+{#                    <option></option>#}
+{#                  </select>#}
+{#              </div>#}
+{#              <div class="input-field col s1">#}
+{#                  <select id="year" name="year">#}
+{#                    <option></option>#}
+{#                  </select>#}
+{#              </div>#}
+{#          </div>#}
+          <div class="row">
+            <div class="col s8">
+                <div id='calendar'></div>
+            </div>
+            <div class="col s4">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <select id="member_ids" name="member_id">
+                            <option value="" disabled selected>Seleccione Socio</option>
+                            {% for member in members %}
+                              <option value={{ member.id }} {{ 'selected' if appointment and member.id == appointment.member.id else ''}}>{{ member.member_number|string + ' - ' + member.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                      <select id="date" name="start">
+                        <option></option>
+                      </select>
+                    </div>
+                </div>
+            <div>
+          </div>
+
+        <button type="submit" class="btn btn-default">
+            {% if appointment %}
+                Editar
+            {% else %}
+                Crear
+            {% endif %}
+        </button>
+        <button class="btn red darken-4" onclick="back()">Cancelar</button>
+      </form>
+      </div>
+      <br>
+      {% for error in errors %}
+        <h4>{{ error }}</h4>
+      {% endfor %}
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <script type='text/javascript'>
+        var month_selected = false;
+        var year_selected = false;
+        $(document).ready(function () {
+            $('#member_ids').select2();
+
+{#            fillSelects();#}
+{##}
+{#            $('#month').select2({#}
+{#                placeholder: "Mes",#}
+{#                minimumResultsForSearch: Infinity#}
+{#            });#}
+{#            $('#year').select2({#}
+{#                placeholder: "Año",#}
+{#                minimumResultsForSearch: Infinity#}
+{#            });#}
+{##}
+{#            $('#month').on("select2:select", function (e) { month_selected = $(this).val(); checkDateSelection(); });#}
+{#            $('#year').on("select2:select", function (e) { year_selected = $(this).val(); checkDateSelection(); });#}
+
+            createCalendar(undefined, '{{ doctor_id }}', true);
+        });
+
+        function checkDateSelection() {
+            if(month_selected && year_selected) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/doctors/' + $('#doctor_id').val() + '/schedule/' + month_selected + '/' + year_selected,
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    dataType: "json",
+                    contentType : "application/json"
+                })
+            }
+        }
+
+        $("#AppointmentsForm").submit(function(event) {
+            event.preventDefault();
+            var $form = $( this ), url = $form.attr( 'action' );
+            var formData = JSON.stringify($form.serializeObject())
+            $.ajax({
+                {% if appointment %}
+                type: "PUT",
+                {% else %}
+                type: "POST",
+                {% endif %}
+                url: url,
+                data: formData,
+                success: function() {
+                    window.location.replace("{{ url_for('appointments', doctor_id=doctor_id) }}")
+                },
+                dataType: "json",
+                contentType : "application/json"
+            });
+        });
+
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        function back() {
+            window.location.replace("{{ url_for('appointments', doctor_id=doctor_id) }}");
+        }
+
+        function fillSelects() {
+            var months = [
+                {text: 'Enero', value: 1},
+                {text: 'Febrero', value: 2},
+                {text: 'Marzo', value: 3},
+                {text: 'Abril', value: 4},
+                {text: 'Mayo', value: 5},
+                {text: 'Junio', value: 6},
+                {text: 'Julio', value: 7},
+                {text: 'Agosto', value: 8},
+                {text: 'Septiembre', value: 9},
+                {text: 'Octubre', value: 10},
+                {text: 'Noviembre', value: 11},
+                {text: 'Diciembre', value: 12}
+            ];
+
+            var years = [];
+            var current_year = new Date().getFullYear();
+            for (var i = 0; i < 10; i++) {
+                years.push(current_year + i);
+            }
+
+            $.each(months, function (i, month) {
+                $('#month').append($('<option>', {
+                    value: month.value,
+                    text : month.text
+                }));
+            });
+
+            $.each(years, function (i, year) {
+                $('#year').append($('<option>', {
+                    value: year,
+                    text : year
+                }));
+            });
+        }
+
+
+
+
+      </script>
+  {% endif %}
+{% endblock %}

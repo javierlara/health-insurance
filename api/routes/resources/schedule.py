@@ -12,7 +12,7 @@ from sqlalchemy import extract
 from api.models import get_time
 
 
-class Schedule():
+class Schedule:
 
     @staticmethod
     def get_schedule(doctor_id, miliseconds):

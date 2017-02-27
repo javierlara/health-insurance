@@ -26,13 +26,24 @@ class Appointment:
 
     @staticmethod
     def get_appointment_by(member_id=None, doctor_id=None):
+        query = Appointment.get_appointments_query(member_id, doctor_id)
+        return query.first()
+
+    @staticmethod
+    def get_appointments_by(member_id=None, doctor_id=None):
+        query = Appointment.get_appointments_query(member_id, doctor_id)
+        return query.all()
+
+    @staticmethod
+    def get_appointments_query(member_id=None, doctor_id=None):
         query = session.query(models.Appointment)
         if member_id is not None:
             query = query.filter(models.Appointment.member_id == member_id)
         if doctor_id is not None:
             query = query.filter(models.Appointment.doctor_id == doctor_id)
-        query = query.filter(models.Appointment.deleted_at == None)
-        return query.first()
+        query = query.filter(models.Appointment.deleted_at == None)\
+            .order_by(models.Appointment.start.asc())
+        return query
 
     @staticmethod
     def get_appointment(appointment_id):
@@ -48,7 +59,7 @@ class Appointment:
         appointment = models.Appointment(
             doctor_id=data.get('doctor_id'),
             member_id=data.get('member_id'),
-            start=data.get('start')
+            start=int(data.get('start'))
         )
         session.add(appointment)
         session.commit()
