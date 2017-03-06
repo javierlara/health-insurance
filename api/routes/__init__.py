@@ -78,6 +78,12 @@ def filter_appointment():
     appointment = Appointment()
     return jsonify(appointment.get_by())
 
+@app.route('/api/appointments/filter', methods=['GET'])
+# Recibe doctor_id y/o member_id por query param
+def filter_appointments():
+    appointment = Appointment()
+    return jsonify({"appointments": appointment.get_all_by()})
+
 #MEMBERS
 @app.route('/api/members/number/<string:member_number>', methods=['GET'])
 def get_member_by_number(member_number):

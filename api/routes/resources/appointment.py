@@ -24,6 +24,11 @@ class Appointment:
             abort(404)
         return appointment.serialize()
 
+    def get_all_by(self):
+        data = request.args
+        appointments = self.get_appointments_by(member_id=data.get('member_id'), doctor_id=data.get('doctor_id'))
+        return [r.serialize() for r in appointments]
+
     @staticmethod
     def get_appointment_by(member_id=None, doctor_id=None):
         query = Appointment.get_appointments_query(member_id, doctor_id)
