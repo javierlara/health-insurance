@@ -304,6 +304,7 @@ class Appointment(Base):
     start = Column(DateTime())
     end = Column(DateTime())
     deleted_at = Column(DateTime())
+    doctor = relationship('Doctor', foreign_keys=doctor_id, backref='appointments')
     member = relationship('Member', foreign_keys=member_id)
 
     def __init__(self, doctor_id, member_id, start, end=None):
@@ -321,6 +322,7 @@ class Appointment(Base):
         return {
             'id': self.id,
             'doctor_id': self.doctor_id,
+            'doctor': self.doctor.serialize(False),
             'member_id': self.member_id,
             'start': self.start,
             'end': self.end,
