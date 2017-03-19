@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import abort, make_response, request
+import flask as f
 import api.models as models
 from datetime import datetime
 from api.db import db_session as session
@@ -45,6 +46,7 @@ class Member(Resource):
             abort(404)
         data = request.get_json()
         self.update_member(member, data)
+        f.flash('El socio "' + member.name + '" fue editado con éxito')
         return member.serialize()
 
     def delete(self, member_id):
@@ -52,6 +54,7 @@ class Member(Resource):
         if member is None:
             abort(404)
         self.delete_member(member)
+        f.flash('El socio "' + member.name + '" fue borrado con éxito')
         return make_response()
 
 
@@ -63,6 +66,7 @@ class MemberCollection(Resource):
     def post(self):
         data = request.get_json()
         new_member = self.add_new_member(data)
+        f.flash('El socio "' + new_member.name + '" fue creado con éxito')
         return new_member.serialize()
 
     @staticmethod

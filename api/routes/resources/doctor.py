@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import abort, make_response, request
+import flask as f
 import api.models as models
 from datetime import datetime
 from api.db import db_session as session
@@ -32,6 +33,7 @@ class Doctor(Resource):
             abort(404)
         data = request.get_json()
         self.update_doctor(doctor, data)
+        f.flash('El prestador "' + doctor.name + '" fue editado con éxito')
         return doctor.serialize()
 
     def delete(self, doctor_id):
@@ -39,6 +41,7 @@ class Doctor(Resource):
         if doctor is None:
             abort(404)
         self.delete_doctor(doctor)
+        f.flash('El prestador "' + doctor.name + '" fue borrado con éxito')
         return make_response()
 
 
@@ -50,6 +53,7 @@ class DoctorCollection(Resource):
     def post(self):
         data = request.get_json()
         new_doctor = self.add_new_doctor(data)
+        f.flash('El prestador "' + new_doctor.name + '" fue creado con éxito')
         return new_doctor.serialize()
 
     @staticmethod

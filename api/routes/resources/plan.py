@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import abort, make_response, request
+import flask as f
 import api.models as models
 from datetime import datetime
 from api.db import db_session as session
@@ -32,6 +33,7 @@ class Plan(Resource):
             abort(404)
         data = request.get_json()
         self.update_plan(plan, data)
+        f.flash('El plan "' + plan.name + '" fue editado con éxito')
         return plan.serialize()
 
     def delete(self, plan_id):
@@ -39,6 +41,7 @@ class Plan(Resource):
         if plan is None:
             abort(404)
         self.delete_plan(plan)
+        f.flash('El plan "' + plan.name + '" fue borrado con éxito')
         return make_response()
 
 
@@ -50,6 +53,7 @@ class PlanCollection(Resource):
     def post(self):
         data = request.get_json()
         new_plan = self.add_new_plan(data)
+        f.flash('El plan "' + new_plan.name + '" fue creado con éxito')
         return new_plan.serialize()
 
     @staticmethod

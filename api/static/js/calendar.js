@@ -330,10 +330,12 @@ function saveSchedule(doctorId) {
         success: function(response) {
             $('#existing').val(1);
             $('.day.selected').addClass('filled');
+            Materialize.toast('Guardado con éxito!', 4000);
             console.log(response)
         },
         error: function(xhr, ajaxOptions, thrownError) {
             if(xhr.status==404) {
+                Materialize.toast('No se pudo guardar', 4000);
                 console.log(thrownError);
             }
         }
