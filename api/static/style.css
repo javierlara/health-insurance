@@ -56,3 +56,17 @@
 .filled {
     background-color: #A5D6A7;
 }
+
+.home-slider {
+    display:block;
+    margin:auto;
+}
+
+.home-slider-container {
+    position:relative;
+}
+
+.select-error {
+    color: darkred;
+    margin-bottom: 30px;
+}
