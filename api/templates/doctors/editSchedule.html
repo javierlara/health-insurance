@@ -32,6 +32,7 @@
           </div>
         </div>
       </div>
+      <button type="button" class="btn red darken-4" onclick="back()">Cancelar</button>
 
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
@@ -41,6 +42,11 @@
 
             initTimeSelects();
         });
+
+        function back() {
+            window.location.replace("{{ url_for('doctors') }}");
+        }
+
     </script>
 
 
