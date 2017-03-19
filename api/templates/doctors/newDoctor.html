@@ -73,14 +73,14 @@
     <script type='text/javascript'>
 
         $(document).ready(function () {
-            $('#plan_ids').material_select()
-            $('#speciality_ids').material_select()
+            $('#plan_ids').material_select();
+            $('#speciality_ids').material_select();
         })
 
         $("#DoctorsForm").submit(function(event) {
             event.preventDefault();
             var $form = $( this ), url = $form.attr( 'action' );
-            var formData = JSON.stringify($form.serializeObject())
+            var formData = JSON.stringify($form.serializeObject());
             $.ajax({
                 {% if doctor %}
                 type: "PUT",

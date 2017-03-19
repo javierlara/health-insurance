@@ -62,12 +62,12 @@
 
         $(document).ready(function () {
             $('#plan_ids').material_select()
-        })
+        });
 
         $("#healthCentersForm").submit(function(event) {
             event.preventDefault();
             var $form = $( this ), url = $form.attr( 'action' );
-            var formData = JSON.stringify($form.serializeObject())
+            var formData = JSON.stringify($form.serializeObject());
             $.ajax({
                 {% if center %}
                 type: "PUT",

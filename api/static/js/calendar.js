@@ -8,12 +8,17 @@ function createCalendar(date, doctorId, new_appointment) {
     //  DECLARE AND INITIALIZE VARIABLES
     var today = new Date();
     // var weekday = today.getDay();    // Returns day (1-31)
-    today = format(today)
 
     var Calendar = new Date();
     if (typeof date != 'undefined') {
         Calendar = date;
+        today.setHours(date.getHours());
+        today.setMinutes(date.getMinutes());
+        today.setSeconds(date.getSeconds());
+        today.setMilliseconds(date.getMilliseconds());
     }
+
+    today = format(today);
 
     var year = Calendar.getFullYear();     // Returns year
     var month = Calendar.getMonth();    // Returns month (0-11)
@@ -37,6 +42,7 @@ function createCalendar(date, doctorId, new_appointment) {
     var TR_end = '</TR>';
     var TD_start = '<TD WIDTH="30" class="day">';
     var TD_start_data_date = '<TD WIDTH="30" class="day selectable" data-date=';
+    var TD_start_data_date_old = '<TD WIDTH="30" class="day selectable not-editable" data-date=';
     var TD_end = '</TD>';
 
     cal =  '<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=0 BORDERCOLOR=BBBBBB><TR><TD>';
@@ -87,7 +93,11 @@ function createCalendar(date, doctorId, new_appointment) {
                     cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " id='today'>" + day + TD_end;
                 } else {
                     // PRINTS DAY
-                    cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
+                    if(format(Calendar) >= today) {
+                        cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
+                    } else {
+                        cal += TD_start_data_date_old + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
+                    }
                 }
             }
 
@@ -197,7 +207,7 @@ function initTimeSelects() {
     $('#scheduleSelect select').material_select();
 }
 
-function showScheduleSelect(schedule) {
+function showScheduleSelect(dontShowButton, schedule) {
     console.log(schedule);
     $('#scheduleSelect').removeClass('hidden');
     $('#scheduleSelect select').val('');
@@ -210,6 +220,15 @@ function showScheduleSelect(schedule) {
         $('#from').val(getHoursAndMinutes(from));
         $('#to').val(getHoursAndMinutes(to));
     }
+    if(dontShowButton) {
+        $('#from').attr('disabled',true);
+        $('#to').attr('disabled',true);
+        $('#saveScheduleButton').hide();
+    } else {
+                $('#from').attr('disabled',false);
+        $('#to').attr('disabled',false);
+        $('#saveScheduleButton').show();
+    }
     $('#scheduleSelect select').material_select();
 }
 
@@ -220,6 +239,8 @@ function onSelectDay(element, doctorId) {
     element.addClass('selected');
     $('.dayLabel').text(dateToString(calendar));
 
+    var dontShowButton = element.hasClass('not-editable');
+
     var url = '/api/doctors/' + doctorId + '/schedule/' + date;
 
     $.ajax({
@@ -227,9 +248,9 @@ function onSelectDay(element, doctorId) {
         url: url,
         success: function(response) {
             if(response.success){
-                showScheduleSelect(response.payload);
+                showScheduleSelect(dontShowButton, response.payload);
             } else {
-                showScheduleSelect();
+                showScheduleSelect(dontShowButton);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
