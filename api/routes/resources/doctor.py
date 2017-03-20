@@ -3,6 +3,8 @@ from flask import abort, make_response, request
 import flask as f
 import api.models as models
 from datetime import datetime
+
+from api import User
 from api.db import db_session as session
 
 
@@ -19,6 +21,16 @@ class Doctor(Resource):
     @staticmethod
     def update_doctor(doctor, data):
         doctor.update(data)
+        if doctor.user:
+            doctor.user.update(data)
+        else:
+            user = User(
+                username=data.get('username'),
+                password=data.get('password'),
+                doctor_id=doctor.id
+            )
+            session.add(user)
+        print(doctor.user.password)
         session.commit()
 
     def get(self, doctor_id):
@@ -73,6 +85,15 @@ class DoctorCollection(Resource):
         )
 
         session.add(doctor)
+        session.commit()
+
+        user = User(
+            username=data.get('username'),
+            password=data.get('password'),
+            doctor_id=doctor.id
+        )
+
+        session.add(user)
         session.commit()
 
         return doctor

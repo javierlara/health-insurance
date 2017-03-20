@@ -32,7 +32,9 @@
           </div>
         </div>
       </div>
-      <button type="button" class="btn red darken-4" onclick="back()">Cancelar</button>
+      {% if not current_user.is_doctor %}
+        <button type="button" class="btn red darken-4" onclick="back()">Cancelar</button>
+      {% endif %}
 
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
