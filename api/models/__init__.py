@@ -197,7 +197,7 @@ class Doctor(Base):
     plans = relationship('Plan', secondary=doctors_plans, backref='doctors')
     specialities = relationship('Speciality', secondary=doctors_specialities, backref='doctors')
     deleted_at = Column(DateTime())
-    user_id = Column(Integer)
+    user = relationship("User", uselist=False, backref="doctors")
 
     def __init__(self, name, address, telephone, location, plan_ids, speciality_ids):
         self.name = name

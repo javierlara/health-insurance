@@ -25,13 +25,16 @@
               </select>
               <label>Hasta</label>
           </div>
+            <div class="select-error hidden"><span></span></div>
             <input id='existing' name="existing" type="hidden" />
           <div class="row">
               <button id="saveScheduleButton" class="btn btn-default">Guardar</button>
-        </button>
           </div>
         </div>
       </div>
+      {% if not current_user.is_doctor %}
+        <button type="button" class="btn red darken-4" onclick="back()">Cancelar</button>
+      {% endif %}
 
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
@@ -41,6 +44,11 @@
 
             initTimeSelects();
         });
+
+        function back() {
+            window.location.replace("{{ url_for('doctors') }}");
+        }
+
     </script>
 
 

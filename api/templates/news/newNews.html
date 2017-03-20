@@ -18,6 +18,7 @@
             <div class="input-field col s6">
                 <input type="text" name="image" id="image" class="validate" required value="{{ news.image if news else '' }}" />
                 <label for="image">Image (URL)</label>
+                <image id="image-src" src="{{ news.image if news else '' }}" />
             </div>
         </div>
         <div class="row">
@@ -40,13 +41,18 @@
                 Crear
             {% endif %}
         </button>
-        <button class="btn red darken-4" onclick="back()">Cancelar</button>
+        <button type="button" class="btn red darken-4" onclick="back()">Cancelar</button>
       </form>
       <br>
       {% for error in errors %}
         <h4>{{ error }}</h4>
       {% endfor %}
     <script type='text/javascript'>
+
+        $('input[name=image]').change(function() {
+            $("#image-src").attr('src',$("#image").val());
+        });
+
         $("#newsForm").submit(function(event) {
             event.preventDefault();
             var $form = $( this ), url = $form.attr( 'action' );

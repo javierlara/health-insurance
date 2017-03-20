@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import abort, make_response, request
+import flask as f
 import api.models as models
 from datetime import datetime
 from api.db import db_session as session
@@ -32,6 +33,7 @@ class News(Resource):
             abort(404)
         data = request.get_json()
         self.update_news(news, data)
+        f.flash('La noticia "' + news.title + '" fue editada con éxito')
         return news.serialize()
 
     def delete(self, news_id):
@@ -39,6 +41,7 @@ class News(Resource):
         if news is None:
             abort(404)
         self.delete_news(news)
+        f.flash('La noticia "' + news.title + '" fue borrada con éxito')
         return make_response()
 
 
@@ -50,6 +53,7 @@ class NewsCollection(Resource):
     def post(self):
         data = request.get_json()
         new_news = self.add_new_news(data)
+        f.flash('La noticia "' + new_news.title + '" fue creada con éxito')
         return new_news.serialize()
 
     @staticmethod

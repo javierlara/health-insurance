@@ -8,12 +8,17 @@ function createCalendar(date, doctorId, new_appointment) {
     //  DECLARE AND INITIALIZE VARIABLES
     var today = new Date();
     // var weekday = today.getDay();    // Returns day (1-31)
-    today = format(today)
 
     var Calendar = new Date();
     if (typeof date != 'undefined') {
         Calendar = date;
+        today.setHours(date.getHours());
+        today.setMinutes(date.getMinutes());
+        today.setSeconds(date.getSeconds());
+        today.setMilliseconds(date.getMilliseconds());
     }
+
+    today = format(today);
 
     var year = Calendar.getFullYear();     // Returns year
     var month = Calendar.getMonth();    // Returns month (0-11)
@@ -37,6 +42,7 @@ function createCalendar(date, doctorId, new_appointment) {
     var TR_end = '</TR>';
     var TD_start = '<TD WIDTH="30" class="day">';
     var TD_start_data_date = '<TD WIDTH="30" class="day selectable" data-date=';
+    var TD_start_data_date_old = '<TD WIDTH="30" class="day selectable not-editable" data-date=';
     var TD_end = '</TD>';
 
     cal =  '<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=0 BORDERCOLOR=BBBBBB><TR><TD>';
@@ -87,7 +93,11 @@ function createCalendar(date, doctorId, new_appointment) {
                     cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " id='today'>" + day + TD_end;
                 } else {
                     // PRINTS DAY
-                    cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
+                    if(format(Calendar) >= today) {
+                        cal += TD_start_data_date + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
+                    } else {
+                        cal += TD_start_data_date_old + format(Calendar) + " data-day=" + getDay(Calendar) + " >" + day + TD_end;
+                    }
                 }
             }
 
@@ -197,17 +207,27 @@ function initTimeSelects() {
     $('#scheduleSelect select').material_select();
 }
 
-function showScheduleSelect(schedule) {
+function showScheduleSelect(dontShowButton, schedule) {
     console.log(schedule);
     $('#scheduleSelect').removeClass('hidden');
     $('#scheduleSelect select').val('');
     $('#existing').val('');
+    $('.select-error').addClass('hidden');
     if (schedule) {
         $('#existing').val(1);
         var from = new Date(schedule.start);
         var to = new Date(schedule.end);
         $('#from').val(getHoursAndMinutes(from));
         $('#to').val(getHoursAndMinutes(to));
+    }
+    if(dontShowButton) {
+        $('#from').attr('disabled',true);
+        $('#to').attr('disabled',true);
+        $('#saveScheduleButton').hide();
+    } else {
+                $('#from').attr('disabled',false);
+        $('#to').attr('disabled',false);
+        $('#saveScheduleButton').show();
     }
     $('#scheduleSelect select').material_select();
 }
@@ -219,6 +239,8 @@ function onSelectDay(element, doctorId) {
     element.addClass('selected');
     $('.dayLabel').text(dateToString(calendar));
 
+    var dontShowButton = element.hasClass('not-editable');
+
     var url = '/api/doctors/' + doctorId + '/schedule/' + date;
 
     $.ajax({
@@ -226,9 +248,9 @@ function onSelectDay(element, doctorId) {
         url: url,
         success: function(response) {
             if(response.success){
-                showScheduleSelect(response.payload);
+                showScheduleSelect(dontShowButton, response.payload);
             } else {
-                showScheduleSelect();
+                showScheduleSelect(dontShowButton);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -290,13 +312,36 @@ function dateToString(date) {
     return day + ' de ' + monthNames[monthIndex] + ' de ' + year;
 }
 
-function saveSchedule(doctorId) {
+function getSelectStartAndEnd(){
     var selected = getSelectedDate();
-    var startValue = $('#from').val().split(':');
-    var start = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), startValue[0], startValue[1], 0);
-    var endValue = $('#to').val().split(':');
-    var end = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), endValue[0], endValue[1], 0);
-    var existing = $('#existing').val()
+    var start = null;
+    var end = null;
+    if($('#from').val()) {
+        var startValue = $('#from').val().split(':');
+        start = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), startValue[0], startValue[1], 0);
+    }
+    if($('#to').val()) {
+        var endValue = $('#to').val().split(':');
+        end = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), endValue[0], endValue[1], 0);
+    }
+    return {'start':start, 'end':end};
+}
+
+function saveSchedule(doctorId) {
+
+    $('.select-error').addClass('hidden');
+
+    var dates = getSelectStartAndEnd();
+    var start = dates['start'];
+    var end = dates['end'];
+
+    var result = validateSchedule(start,end);
+
+    if(!result) {
+        return;
+    }
+
+    var existing = $('#existing').val();
     $.ajax({
         type: (existing?"PUT":"POST"),
         data: JSON.stringify({start: start.getTime().toString(), end: end.getTime().toString()}),
@@ -306,14 +351,32 @@ function saveSchedule(doctorId) {
         success: function(response) {
             $('#existing').val(1);
             $('.day.selected').addClass('filled');
+            Materialize.toast('Guardado con éxito!', 4000);
             console.log(response)
         },
         error: function(xhr, ajaxOptions, thrownError) {
             if(xhr.status==404) {
+                Materialize.toast('No se pudo guardar', 4000);
                 console.log(thrownError);
             }
         }
     });
+}
+
+function validateSchedule(start, end) {
+
+    if(!start || !end) {
+        $('.select-error').removeClass('hidden');
+        $('.select-error span').text('Complete los datos');
+        return false;
+    }
+
+    if(start.getTime() > end.getTime()) {
+        $('.select-error').removeClass('hidden');
+        $('.select-error span').text('El Desde debe ser menor al Hasta');
+        return false;
+    }
+    return true;
 }
 
 function getSelectedDate() {

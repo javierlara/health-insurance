@@ -14,6 +14,18 @@
                 <label for="name">Nombre</label>
             </div>
         </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="username" id="username" class="validate" required value="{{ doctor.user.username if doctor else '' }}" />
+                <label for="telephone">Usuario</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" name="password" id="password" class="validate" value="" />
+                <label for="telephone">{{ 'Editar Contraseña' if doctor else 'Contraseña' }}</label>
+            </div>
+        </div>
 
 
           <div class="row">
@@ -63,7 +75,7 @@
                 Crear
             {% endif %}
         </button>
-        <button class="btn red darken-4" onclick="back()">Cancelar</button>
+        <button type="button" class="btn red darken-4" onclick="back()">Cancelar</button>
       </form>
       </div>
       <br>
@@ -73,14 +85,14 @@
     <script type='text/javascript'>
 
         $(document).ready(function () {
-            $('#plan_ids').material_select()
-            $('#speciality_ids').material_select()
+            $('#plan_ids').material_select();
+            $('#speciality_ids').material_select();
         })
 
         $("#DoctorsForm").submit(function(event) {
             event.preventDefault();
             var $form = $( this ), url = $form.attr( 'action' );
-            var formData = JSON.stringify($form.serializeObject())
+            var formData = JSON.stringify($form.serializeObject());
             $.ajax({
                 {% if doctor %}
                 type: "PUT",
