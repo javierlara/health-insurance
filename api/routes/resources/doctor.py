@@ -30,7 +30,6 @@ class Doctor(Resource):
                 doctor_id=doctor.id
             )
             session.add(user)
-        print(doctor.user.password)
         session.commit()
 
     def get(self, doctor_id):
