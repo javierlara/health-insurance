@@ -33,10 +33,16 @@ class HealthCenter(Base):
         self.extradata = extradata
         self.plans = []
 
-        for id in plan_ids:
-            plan = session.query(Plan).get(id)
-            if plan is not None:
-                self.plans.append(plan)
+        if plan_ids is not None:
+            aux_plan_ids = []
+            if isinstance(plan_ids, str):
+                aux_plan_ids.append(plan_ids)
+            else:
+                aux_plan_ids = plan_ids
+            for id in aux_plan_ids:
+                plan = session.query(Plan).get(id)
+                if plan is not None:
+                    self.plans.append(plan)
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -63,7 +69,12 @@ class HealthCenter(Base):
         self.extradata = data.get('extradata')
         self.plans = []
         if data.get('plan_ids') is not None:
-            for id in data.get('plan_ids'):
+            aux_plan_ids = []
+            if isinstance(data.get('plan_ids'), str):
+                aux_plan_ids.append(data.get('plan_ids'))
+            else:
+                aux_plan_ids = data.get('plan_ids')
+            for id in aux_plan_ids:
                 plan = session.query(Plan).get(id)
                 if plan is not None:
                     self.plans.append(plan)
@@ -206,12 +217,22 @@ class Doctor(Base):
         self.location = location
 
         if plan_ids is not None:
-            for p_id in plan_ids:
+            aux_plan_ids = []
+            if isinstance(plan_ids, str):
+                aux_plan_ids.append(plan_ids)
+            else:
+                aux_plan_ids = plan_ids
+            for p_id in aux_plan_ids:
                 plan = session.query(Plan).get(p_id)
                 if plan is not None:
                     self.plans.append(plan)
         if speciality_ids is not None:
-            for s_id in speciality_ids:
+            aux_speciality_ids = []
+            if isinstance(speciality_ids, str):
+                aux_speciality_ids.append(speciality_ids)
+            else:
+                aux_speciality_ids = speciality_ids
+            for s_id in aux_speciality_ids:
                 speciality = session.query(Speciality).get(s_id)
                 if speciality is not None:
                     self.specialities.append(speciality)
@@ -243,12 +264,22 @@ class Doctor(Base):
         self.plans = []
         self.specialities = []
         if data.get('plan_ids') is not None:
-            for p_id in data.get('plan_ids'):
+            plan_ids = []
+            if isinstance(data.get('plan_ids'), str):
+                plan_ids.append(data.get('plan_ids'))
+            else:
+                plan_ids = data.get('plan_ids')
+            for p_id in plan_ids:
                 plan = session.query(Plan).get(p_id)
                 if plan is not None:
                     self.plans.append(plan)
         if data.get('speciality_ids') is not None:
-            for s_id in data.get('speciality_ids'):
+            speciality_ids = []
+            if isinstance(data.get('speciality_ids'), str):
+                speciality_ids.append(data.get('speciality_ids'))
+            else:
+                speciality_ids = data.get('speciality_ids')
+            for s_id in speciality_ids:
                 speciality = session.query(Speciality).get(s_id)
                 if speciality is not None:
                     self.specialities.append(speciality)
