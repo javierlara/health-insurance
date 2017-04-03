@@ -129,13 +129,13 @@ function setEvents(originalDate, doctorId, new_appointment) {
     $('.prevMonth').off('click');
     $('.prevMonth').click(function() {
         originalDate.setMonth(originalDate.getMonth() - 1)
-        createCalendar(originalDate, doctorId);
+        createCalendar(originalDate, doctorId, new_appointment);
     });
 
     $('.nextMonth').off('click');
     $('.nextMonth').click(function() {
         originalDate.setMonth(originalDate.getMonth() + 1)
-        createCalendar(originalDate, doctorId);
+        createCalendar(originalDate, doctorId, new_appointment);
     });
 
     $('.day.selectable').off('click');
