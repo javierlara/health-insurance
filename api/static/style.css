@@ -76,6 +76,6 @@
     margin-bottom: 30px;
 }
 
-.apres-container {
-    width: 85%;
+.nav-wrapper.container.apres-container {
+    width: 80%;
 }
