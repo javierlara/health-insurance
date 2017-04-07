@@ -64,6 +64,7 @@
 .home-slider {
     display:block;
     margin:auto;
+    max-width: 100%;
 }
 
 .home-slider-container {
@@ -73,4 +74,8 @@
 .select-error {
     color: darkred;
     margin-bottom: 30px;
+}
+
+.apres-container {
+    width: 85%;
 }
